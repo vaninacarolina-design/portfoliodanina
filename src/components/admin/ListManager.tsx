@@ -41,7 +41,7 @@ export const ListManager = ({ table, title, fields }: Props) => {
       const { error } = await supabase.from(table).update(payload).eq("id", editing);
       if (error) return toast.error(error.message);
     }
-    toast.success("Salvo");
+    toast.success("Salvo! Site atualizado.");
     setEditing(null);
     qc.invalidateQueries({ queryKey: [table] });
   };
@@ -50,6 +50,7 @@ export const ListManager = ({ table, title, fields }: Props) => {
     if (!confirm("Excluir este item?")) return;
     const { error } = await supabase.from(table).delete().eq("id", id);
     if (error) return toast.error(error.message);
+    toast.success("Excluído");
     qc.invalidateQueries({ queryKey: [table] });
   };
 
