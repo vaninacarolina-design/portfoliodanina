@@ -20,6 +20,7 @@ const AdminProjetoEditor = () => {
   const { id } = useParams();
   const isNew = id === "novo" || !id;
   const nav = useNavigate();
+  const qc = useQueryClient();
   const [f, setF] = useState<any>({
     titulo: "", slug: "", subtitulo: "", categoria: "", descricao_curta: "", conteudo: "",
     cover_url: null, video_url: "", galeria: [], cliente: "", papel: "", periodo: "",
