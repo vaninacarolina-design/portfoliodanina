@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { toast } from "sonner";
 
 const AdminConfig = () => {
+  const qc = useQueryClient();
   const { data, refetch } = useQuery({
     queryKey: ["site_settings_admin"],
     queryFn: async () => (await supabase.from("site_settings").select("*").limit(1).maybeSingle()).data,
@@ -30,7 +31,10 @@ const AdminConfig = () => {
     }).eq("id", form.id);
     setSaving(false);
     if (error) return toast.error(error.message);
-    toast.success("Salvo!"); refetch();
+    toast.success("Salvo! Site atualizado.");
+    refetch();
+    qc.invalidateQueries({ queryKey: ["site_settings"] });
+    qc.invalidateQueries({ queryKey: ["site_settings_contact"] });
   };
 
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ const AdminProjetoEditor = () => {
   const { id } = useParams();
   const isNew = id === "novo" || !id;
   const nav = useNavigate();
+  const qc = useQueryClient();
   const [f, setF] = useState<any>({
     titulo: "", slug: "", subtitulo: "", categoria: "", descricao_curta: "", conteudo: "",
     cover_url: null, video_url: "", galeria: [], cliente: "", papel: "", periodo: "",
@@ -54,14 +55,21 @@ const AdminProjetoEditor = () => {
       const { data, error } = await supabase.from("projetos").insert(payload).select().single();
       setBusy(false);
       if (error) return toast.error(error.message);
-      toast.success("Projeto criado");
+      toast.success("Projeto criado!");
+      qc.invalidateQueries({ queryKey: ["projetos_admin"] });
+      qc.invalidateQueries({ queryKey: ["projetos_all"] });
+      qc.invalidateQueries({ queryKey: ["projetos_home"] });
       nav(`/admin/projetos/${data.id}`);
     } else {
       const { error } = await supabase.from("projetos").update(payload).eq("id", id!);
       setBusy(false);
       if (error) return toast.error(error.message);
-      toast.success(publish ? "Publicado!" : "Salvo");
+      toast.success(publish ? "Publicado! Site atualizado." : "Salvo! Site atualizado.");
       if (publish !== undefined) set("publicado", publish);
+      qc.invalidateQueries({ queryKey: ["projetos_admin"] });
+      qc.invalidateQueries({ queryKey: ["projetos_all"] });
+      qc.invalidateQueries({ queryKey: ["projetos_home"] });
+      qc.invalidateQueries({ queryKey: ["projeto", f.slug] });
     }
   };
 

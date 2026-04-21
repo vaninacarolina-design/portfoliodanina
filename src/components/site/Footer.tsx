@@ -25,9 +25,8 @@ export const Footer = () => {
           {s?.social_linkedin && <a href={s.social_linkedin} target="_blank" rel="noreferrer" className="block hover-underline w-fit">LinkedIn</a>}
         </div>
       </div>
-      <div className="container-editorial pb-8 flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
+      <div className="container-editorial pb-8 text-xs text-muted-foreground">
         <div>© {year} Vanina Carolina. Todos os direitos reservados.</div>
-        <Link to="/auth" className="opacity-50 hover:opacity-100 transition">Acesso restrito</Link>
       </div>
     </footer>
   );
