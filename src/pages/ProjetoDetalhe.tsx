@@ -18,7 +18,7 @@ const ProjetoDetalhe = () => {
   if (isLoading) return <div className="container-editorial py-32 text-muted-foreground">Carregando…</div>;
   if (!p) return <Navigate to="/projetos" replace />;
 
-  const galeria: string[] = Array.isArray(p.galeria) ? p.galeria : [];
+  const galeria: string[] = Array.isArray(p.galeria) ? (p.galeria as unknown[]).filter((x): x is string => typeof x === "string") : [];
 
   const youtubeId = (url: string) => {
     const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
