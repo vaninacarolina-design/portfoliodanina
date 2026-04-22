@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { toast } from "sonner";
+import { Plus, X } from "lucide-react";
 
 const AdminConfig = () => {
   const qc = useQueryClient();
@@ -17,7 +18,14 @@ const AdminConfig = () => {
   const [form, setForm] = useState<any>(null);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { if (data) setForm(data); }, [data]);
+  useEffect(() => {
+    if (data) {
+      const palavras = Array.isArray((data as any).marquee_palavras)
+        ? (data as any).marquee_palavras
+        : ["Estratégia", "Criatividade", "Gestão", "Impacto", "Design"];
+      setForm({ ...data, marquee_palavras: palavras });
+    }
+  }, [data]);
 
   if (!form) return <div className="text-muted-foreground">Carregando…</div>;
 
@@ -28,7 +36,8 @@ const AdminConfig = () => {
     const { error } = await supabase.from("site_settings").update({
       hero_name: form.hero_name, hero_subtitle: form.hero_subtitle, hero_intro: form.hero_intro,
       hero_image_url: form.hero_image_url, about_text: form.about_text,
-    }).eq("id", form.id);
+      marquee_palavras: form.marquee_palavras ?? [],
+    } as any).eq("id", form.id);
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Salvo! Site atualizado.");
@@ -36,6 +45,11 @@ const AdminConfig = () => {
     qc.invalidateQueries({ queryKey: ["site_settings"] });
     qc.invalidateQueries({ queryKey: ["site_settings_contact"] });
   };
+
+  const palavras: string[] = form.marquee_palavras || [];
+  const updWord = (i: number, v: string) => set("marquee_palavras", palavras.map((p, k) => k === i ? v : p));
+  const addWord = () => set("marquee_palavras", [...palavras, ""]);
+  const rmWord = (i: number) => set("marquee_palavras", palavras.filter((_, k) => k !== i));
 
   return (
     <div className="space-y-8 max-w-3xl">
@@ -69,6 +83,26 @@ const AdminConfig = () => {
       <div>
         <Label htmlFor="about">Texto da seção Sobre</Label>
         <Textarea id="about" rows={6} value={form.about_text} onChange={e => set("about_text", e.target.value)} />
+      </div>
+
+      <div className="border-t border-border pt-8">
+        <Label className="text-base">Banner em movimento (palavras-chave)</Label>
+        <p className="text-sm text-muted-foreground mt-1 mb-4">
+          Palavras que aparecem rolando logo abaixo do hero. Ordem alternada (a 2ª, 4ª… ficam em itálico).
+        </p>
+        <div className="space-y-2">
+          {palavras.map((w, i) => (
+            <div key={i} className="flex gap-2">
+              <Input value={w} onChange={e => updWord(i, e.target.value)} placeholder={`Palavra ${i + 1}`} />
+              <Button type="button" variant="outline" size="icon" onClick={() => rmWord(i)} className="rounded-none">
+                <X size={14} />
+              </Button>
+            </div>
+          ))}
+          <Button type="button" variant="outline" size="sm" onClick={addWord} className="gap-2 rounded-none">
+            <Plus size={14} /> Adicionar palavra
+          </Button>
+        </div>
       </div>
 
       <Button onClick={save} disabled={saving} className="rounded-none">{saving ? "Salvando…" : "Salvar alterações"}</Button>
