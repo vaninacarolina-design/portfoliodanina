@@ -1,39 +1,76 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { uploadMedia } from "@/lib/upload";
 import { toast } from "sonner";
-import { Trash2, Plus, ChevronUp, ChevronDown } from "lucide-react";
+import { Trash2, Plus, GripVertical, Paperclip, X } from "lucide-react";
+import {
+  DndContext, closestCenter, KeyboardSensor, PointerSensor,
+  useSensor, useSensors, type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove, SortableContext, sortableKeyboardCoordinates,
+  useSortable, verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
-interface Field { key: string; label: string; type?: "text" | "textarea" }
+interface Field {
+  key: string;
+  label: string;
+  type?: "text" | "textarea" | "date" | "files";
+}
+
 interface Props {
   table: "formacoes" | "experiencias" | "voluntariados";
   title: string;
   fields: Field[];
+  /** se houver, ordena automaticamente por este campo (data desc) e oculta drag&drop */
+  autoSortByDate?: string;
 }
 
-export const ListManager = ({ table, title, fields }: Props) => {
+export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => {
   const qc = useQueryClient();
   const { data: items = [] } = useQuery({
     queryKey: [table],
-    queryFn: async () => (await supabase.from(table).select("*").order("ordem")).data ?? [],
+    queryFn: async () => {
+      if (autoSortByDate) {
+        const { data } = await supabase.from(table).select("*").order(autoSortByDate, { ascending: false, nullsFirst: false });
+        return data ?? [];
+      }
+      return (await supabase.from(table).select("*").order("ordem")).data ?? [];
+    },
   });
+
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState<any>({});
+  const [localOrder, setLocalOrder] = useState<any[]>([]);
+
+  useEffect(() => { setLocalOrder(items); }, [items]);
 
   const startNew = () => {
     const blank: any = { ordem: items.length };
-    fields.forEach(f => blank[f.key] = "");
+    fields.forEach(f => blank[f.key] = f.type === "files" ? [] : "");
     setForm(blank); setEditing("new");
   };
-  const startEdit = (it: any) => { setForm(it); setEditing(it.id); };
+  const startEdit = (it: any) => {
+    const copy: any = { ...it };
+    fields.forEach(f => { if (f.type === "files" && !Array.isArray(copy[f.key])) copy[f.key] = []; });
+    setForm(copy); setEditing(it.id);
+  };
 
   const save = async () => {
     const payload: any = { ordem: form.ordem ?? 0 };
-    fields.forEach(f => payload[f.key] = form[f.key] ?? "");
+    fields.forEach(f => {
+      let v = form[f.key];
+      if (f.type === "date" && v === "") v = null;
+      if (f.type === "files" && !Array.isArray(v)) v = [];
+      payload[f.key] = v ?? (f.type === "files" ? [] : "");
+    });
     if (editing === "new") {
       const { error } = await supabase.from(table).insert(payload);
       if (error) return toast.error(error.message);
@@ -54,18 +91,74 @@ export const ListManager = ({ table, title, fields }: Props) => {
     qc.invalidateQueries({ queryKey: [table] });
   };
 
-  const move = async (it: any, dir: -1 | 1) => {
-    const idx = items.findIndex((x: any) => x.id === it.id);
-    const swap = items[idx + dir]; if (!swap) return;
-    await supabase.from(table).update({ ordem: (swap as any).ordem }).eq("id", it.id);
-    await supabase.from(table).update({ ordem: it.ordem }).eq("id", (swap as any).id);
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+
+  const onDragEnd = async (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
+    const oldIdx = localOrder.findIndex((x: any) => x.id === active.id);
+    const newIdx = localOrder.findIndex((x: any) => x.id === over.id);
+    const reordered = arrayMove(localOrder, oldIdx, newIdx);
+    setLocalOrder(reordered);
+    // Persist new ordem values
+    await Promise.all(reordered.map((it: any, idx: number) =>
+      supabase.from(table).update({ ordem: idx }).eq("id", it.id)
+    ));
     qc.invalidateQueries({ queryKey: [table] });
+    toast.success("Ordem atualizada");
+  };
+
+  const addAttachment = async (e: React.ChangeEvent<HTMLInputElement>, fieldKey: string) => {
+    const files = Array.from(e.target.files || []); if (!files.length) return;
+    try {
+      const uploaded = await Promise.all(files.map(async f => ({ url: await uploadMedia(f, "anexos"), name: f.name })));
+      setForm({ ...form, [fieldKey]: [...(form[fieldKey] || []), ...uploaded] });
+      toast.success("Arquivos enviados");
+    } catch (err: any) { toast.error(err.message || "Erro no upload"); }
+    finally { e.target.value = ""; }
+  };
+
+  const removeAttachment = (fieldKey: string, idx: number) => {
+    setForm({ ...form, [fieldKey]: form[fieldKey].filter((_: any, i: number) => i !== idx) });
+  };
+
+  const renderField = (f: Field) => {
+    if (f.type === "textarea") return <Textarea rows={3} value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
+    if (f.type === "date") return <Input type="date" value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
+    if (f.type === "files") {
+      const items = form[f.key] || [];
+      return (
+        <div className="space-y-2">
+          {items.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {items.map((a: any, i: number) => (
+                <div key={i} className="relative group border border-border bg-background p-2 flex items-center gap-2 text-xs">
+                  {a.url?.match(/\.(jpe?g|png|webp|gif)$/i)
+                    ? <img src={a.url} alt="" className="w-12 h-12 object-cover" />
+                    : <Paperclip size={14} className="shrink-0" />}
+                  <a href={a.url} target="_blank" rel="noreferrer" className="truncate flex-1 hover:underline">{a.name || "arquivo"}</a>
+                  <button type="button" onClick={() => removeAttachment(f.key, i)} className="text-muted-foreground hover:text-destructive"><X size={14} /></button>
+                </div>
+              ))}
+            </div>
+          )}
+          <label>
+            <input type="file" multiple onChange={e => addAttachment(e, f.key)} className="hidden" accept="image/*,application/pdf,.doc,.docx" />
+            <Button type="button" variant="outline" size="sm" className="gap-2 cursor-pointer pointer-events-none"><Plus size={14} /> Anexar</Button>
+          </label>
+        </div>
+      );
+    }
+    return <Input value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
   };
 
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-4xl">{title}</h1>
+        <div>
+          <h1 className="font-display text-4xl">{title}</h1>
+          {autoSortByDate && <p className="text-sm text-muted-foreground mt-1">Ordenado automaticamente pela data de conclusão (mais recente primeiro)</p>}
+        </div>
         <Button onClick={startNew} className="gap-2 rounded-none"><Plus size={16} /> Novo</Button>
       </div>
 
@@ -74,9 +167,7 @@ export const ListManager = ({ table, title, fields }: Props) => {
           {fields.map(f => (
             <div key={f.key}>
               <Label>{f.label}</Label>
-              {f.type === "textarea"
-                ? <Textarea rows={3} value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />
-                : <Input value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />}
+              <div className="mt-1.5">{renderField(f)}</div>
             </div>
           ))}
           <div className="flex gap-2">
@@ -86,22 +177,50 @@ export const ListManager = ({ table, title, fields }: Props) => {
         </div>
       )}
 
-      <div className="divide-y border-y border-border">
-        {items.length === 0 && <div className="py-8 text-muted-foreground italic">Nenhum item ainda.</div>}
-        {items.map((it: any, i) => (
-          <div key={it.id} className="py-4 flex items-center gap-3">
-            <div className="flex flex-col">
-              <button onClick={() => move(it, -1)} disabled={i === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30"><ChevronUp size={14} /></button>
-              <button onClick={() => move(it, 1)} disabled={i === items.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30"><ChevronDown size={14} /></button>
+      {localOrder.length === 0 && <div className="py-8 text-muted-foreground italic">Nenhum item ainda.</div>}
+
+      {!autoSortByDate ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <SortableContext items={localOrder.map((i: any) => i.id)} strategy={verticalListSortingStrategy}>
+            <div className="border-y border-border divide-y">
+              {localOrder.map((it: any) => (
+                <SortableRow key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} />
+              ))}
             </div>
-            <div className="flex-1 cursor-pointer" onClick={() => startEdit(it)}>
-              <div className="font-medium">{it[fields[0].key]}</div>
-              <div className="text-sm text-muted-foreground">{it[fields[1]?.key]}</div>
-            </div>
-            <Button variant="ghost" size="icon" onClick={() => remove(it.id)}><Trash2 size={16} /></Button>
-          </div>
-        ))}
-      </div>
+          </SortableContext>
+        </DndContext>
+      ) : (
+        <div className="border-y border-border divide-y">
+          {localOrder.map((it: any) => (
+            <Row key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} draggable={false} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
+
+const SortableRow = ({ item, fields, onEdit, onRemove }: any) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  return (
+    <div ref={setNodeRef} style={style}>
+      <Row item={item} fields={fields} onEdit={onEdit} onRemove={onRemove} dragHandle={{ ...attributes, ...listeners }} draggable />
+    </div>
+  );
+};
+
+const Row = ({ item, fields, onEdit, onRemove, dragHandle, draggable }: any) => (
+  <div className="py-4 flex items-center gap-3">
+    {draggable && (
+      <button {...dragHandle} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none p-1" title="Arrastar para reordenar">
+        <GripVertical size={16} />
+      </button>
+    )}
+    <div className="flex-1 cursor-pointer min-w-0" onClick={() => onEdit(item)}>
+      <div className="font-medium truncate">{item[fields[0].key]}</div>
+      <div className="text-sm text-muted-foreground truncate">{item[fields[1]?.key]}</div>
+    </div>
+    <Button variant="ghost" size="icon" onClick={() => onRemove(item.id)}><Trash2 size={16} /></Button>
+  </div>
+);

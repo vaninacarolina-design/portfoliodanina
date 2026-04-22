@@ -15,6 +15,7 @@ export type SiteSettings = {
   social_instagram: string | null;
   social_linkedin: string | null;
   social_behance: string | null;
+  marquee_palavras: string[] | null;
 };
 
 export const useSettings = () => useQuery({
@@ -22,6 +23,6 @@ export const useSettings = () => useQuery({
   queryFn: async () => {
     const { data, error } = await supabase.from("site_settings").select("*").limit(1).maybeSingle();
     if (error) throw error;
-    return data as SiteSettings | null;
+    return data as unknown as SiteSettings | null;
   },
 });
