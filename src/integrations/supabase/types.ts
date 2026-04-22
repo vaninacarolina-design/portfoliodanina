@@ -46,7 +46,9 @@ export type Database = {
       }
       formacoes: {
         Row: {
+          anexos: Json
           created_at: string
+          data_conclusao: string | null
           descricao: string | null
           id: string
           instituicao: string
@@ -55,7 +57,9 @@ export type Database = {
           titulo: string
         }
         Insert: {
+          anexos?: Json
           created_at?: string
+          data_conclusao?: string | null
           descricao?: string | null
           id?: string
           instituicao: string
@@ -64,7 +68,9 @@ export type Database = {
           titulo: string
         }
         Update: {
+          anexos?: Json
           created_at?: string
+          data_conclusao?: string | null
           descricao?: string | null
           id?: string
           instituicao?: string
@@ -144,6 +150,7 @@ export type Database = {
           hero_name: string
           hero_subtitle: string
           id: string
+          marquee_palavras: Json
           social_behance: string | null
           social_instagram: string | null
           social_linkedin: string | null
@@ -160,6 +167,7 @@ export type Database = {
           hero_name?: string
           hero_subtitle?: string
           id?: string
+          marquee_palavras?: Json
           social_behance?: string | null
           social_instagram?: string | null
           social_linkedin?: string | null
@@ -176,6 +184,7 @@ export type Database = {
           hero_name?: string
           hero_subtitle?: string
           id?: string
+          marquee_palavras?: Json
           social_behance?: string | null
           social_instagram?: string | null
           social_linkedin?: string | null
