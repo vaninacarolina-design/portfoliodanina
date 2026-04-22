@@ -27,23 +27,26 @@ const Projetos = () => {
         {!isLoading && projetos.length === 0 && (
           <div className="py-24 text-center text-muted-foreground italic">Em breve novos projetos.</div>
         )}
-        <div className="grid md:grid-cols-2 gap-x-10 gap-y-24">
+
+        {/* Grid uniforme — fileira de imagens clicáveis */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {projetos.map((p: any, i) => (
-            <Reveal key={p.id} delay={(i % 2) * 0.1} className={i % 2 === 1 ? "md:mt-32" : ""}>
+            <Reveal key={p.id} delay={(i % 3) * 0.08}>
               <Link to={`/projetos/${p.slug}`} className="group block">
-                <div className="aspect-[4/5] overflow-hidden bg-secondary mb-6">
+                <div className="aspect-[4/5] overflow-hidden bg-secondary mb-4 relative">
                   {p.cover_url ? (
                     <img src={p.cover_url} alt={p.titulo} loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" />
+                      className="w-full h-full object-cover transition-transform duration-[900ms] group-hover:scale-105" />
                   ) : <div className="w-full h-full" />}
+                  <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors" />
                 </div>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    {p.categoria && <div className="text-eyebrow mb-2">{p.categoria}</div>}
-                    <h2 className="font-display text-3xl md:text-4xl">{p.titulo}</h2>
-                    {p.subtitulo && <p className="text-foreground/70 mt-2">{p.subtitulo}</p>}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    {p.categoria && <div className="text-eyebrow mb-1.5">{p.categoria}</div>}
+                    <h2 className="font-display text-xl md:text-2xl leading-tight truncate">{p.titulo}</h2>
+                    {p.subtitulo && <p className="text-sm text-foreground/70 mt-1 line-clamp-2">{p.subtitulo}</p>}
                   </div>
-                  <ArrowUpRight className="mt-2 shrink-0 transition-transform group-hover:rotate-45" />
+                  <ArrowUpRight className="mt-1 shrink-0 transition-transform group-hover:rotate-45" size={20} />
                 </div>
               </Link>
             </Reveal>

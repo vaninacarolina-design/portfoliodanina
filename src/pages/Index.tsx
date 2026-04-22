@@ -3,6 +3,12 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ArrowUpRight, ArrowDown } from "lucide-react";
+
+const scrollToNext = () => {
+  const target = document.getElementById("apos-hero");
+  if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  else window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+};
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/hooks/useSettings";
@@ -18,7 +24,7 @@ const Index = () => {
 
   const { data: formacoes = [] } = useQuery({
     queryKey: ["formacoes"],
-    queryFn: async () => (await supabase.from("formacoes").select("*").order("ordem")).data ?? [],
+    queryFn: async () => (await supabase.from("formacoes").select("*").order("data_conclusao", { ascending: false, nullsFirst: false })).data ?? [],
   });
   const { data: experiencias = [] } = useQuery({
     queryKey: ["experiencias"],
@@ -70,23 +76,31 @@ const Index = () => {
             </div>
           </motion.div>
         </div>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+        <motion.button
+          type="button"
+          onClick={scrollToNext}
+          aria-label="Rolar para o próximo conteúdo"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors cursor-pointer z-20">
           <span>Role</span>
           <ArrowDown size={14} className="animate-bounce" />
-        </motion.div>
+        </motion.button>
       </section>
 
       {/* MARQUEE */}
-      <section className="border-y border-border py-8 overflow-hidden bg-secondary/40">
+      <section id="apos-hero" className="border-y border-border py-8 overflow-hidden bg-secondary/40">
         <div className="marquee font-display text-4xl md:text-6xl text-foreground/80">
           {Array.from({ length: 2 }).map((_, k) => (
             <div key={k} className="flex gap-16 items-center pr-16">
-              <span>Estratégia</span><span className="text-accent">·</span>
-              <span className="italic">Criatividade</span><span className="text-accent">·</span>
-              <span>Gestão</span><span className="text-accent">·</span>
-              <span className="italic">Impacto</span><span className="text-accent">·</span>
-              <span>Design</span><span className="text-accent">·</span>
+              {(s?.marquee_palavras && s.marquee_palavras.length > 0
+                ? s.marquee_palavras
+                : ["Estratégia", "Criatividade", "Gestão", "Impacto", "Design"]
+              ).map((word, idx) => (
+                <span key={idx} className="flex items-center gap-16">
+                  <span className={idx % 2 === 1 ? "italic" : ""}>{word}</span>
+                  <span className="text-accent">·</span>
+                </span>
+              ))}
             </div>
           ))}
         </div>
