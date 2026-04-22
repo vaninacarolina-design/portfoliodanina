@@ -24,7 +24,7 @@ const Index = () => {
 
   const { data: formacoes = [] } = useQuery({
     queryKey: ["formacoes"],
-    queryFn: async () => (await supabase.from("formacoes").select("*").order("ordem")).data ?? [],
+    queryFn: async () => (await supabase.from("formacoes").select("*").order("data_conclusao", { ascending: false, nullsFirst: false })).data ?? [],
   });
   const { data: experiencias = [] } = useQuery({
     queryKey: ["experiencias"],
