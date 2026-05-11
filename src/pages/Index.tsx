@@ -123,7 +123,7 @@ const Index = () => {
         <div className="grid md:grid-cols-12 gap-12">
           <Reveal className="md:col-span-4"><div className="text-eyebrow">— Sobre</div></Reveal>
           <Reveal delay={0.1} className="md:col-span-8">
-            <p className="text-display-md font-light">{s?.about_text}</p>
+            <div className="text-display-md font-light prose-editorial" dangerouslySetInnerHTML={{ __html: s?.about_text || "" }} />
           </Reveal>
         </div>
       </section>
