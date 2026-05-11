@@ -157,7 +157,7 @@ const Index = () => {
                 <div className="text-xs text-muted-foreground mb-1">{f.periodo}</div>
                 <h3 className="font-display text-2xl">{f.titulo}</h3>
                 <div className="text-foreground/70">{f.instituicao}</div>
-                {f.descricao && <p className="text-sm text-foreground/65 mt-2">{f.descricao}</p>}
+                {f.descricao && <div className="prose-editorial text-sm text-foreground/65 mt-2" dangerouslySetInnerHTML={{ __html: f.descricao }} />}
               </div>
             </Reveal>
           ))}
