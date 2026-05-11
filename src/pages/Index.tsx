@@ -40,7 +40,7 @@ const Index = () => {
     queryFn: async () => (await supabase.from("projetos").select("*").eq("publicado", true).order("ordem").limit(3)).data ?? [],
   });
 
-  const heroImage = s?.hero_image_url || heroImg;
+  const heroImage = s?.hero_image_url || null;
 
   return (
     <>
@@ -71,8 +71,19 @@ const Index = () => {
               </motion.p>
             </div>
             <div className="md:col-span-5 md:justify-self-end">
-              <motion.div style={{ y: yImg }} className="relative aspect-[3/4] w-full max-w-sm overflow-hidden">
-                <img src={heroImage} alt={s?.hero_name ?? ""} className="w-full h-full object-cover" />
+              <motion.div style={{ y: yImg }} className="relative aspect-[3/4] w-full max-w-sm overflow-hidden bg-secondary">
+                {heroImage && (
+                  <img
+                    src={heroImage}
+                    alt={s?.hero_name ?? ""}
+                    loading="eager"
+                    // @ts-ignore
+                    fetchpriority="high"
+                    decoding="async"
+                    onLoad={() => setImgLoaded(true)}
+                    className={`w-full h-full object-cover transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+                  />
+                )}
               </motion.div>
             </div>
           </motion.div>
