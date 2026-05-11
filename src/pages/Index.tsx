@@ -169,12 +169,22 @@ const Index = () => {
           {voluntariados.length === 0 && <Empty label="Nenhuma atividade cadastrada ainda." />}
           {voluntariados.map((v: any, i) => (
             <Reveal key={v.id} delay={i * 0.05}>
-              <div className="bg-secondary/50 p-8 h-full">
-                <div className="text-xs text-muted-foreground mb-2">{v.periodo}</div>
-                <h3 className="font-display text-xl mb-1">{v.titulo}</h3>
-                <div className="text-foreground/70 text-sm mb-3">{v.organizacao}</div>
-                <p className="text-sm text-foreground/65">{v.descricao}</p>
-              </div>
+              <Link to="/atuacao-social" className="block bg-secropdary/50 group h-full">
+                <div className="bg-secondary/50 h-full flex flex-col">
+                  {v.cover_url && (
+                    <div className="aspect-[4/3] overflow-hidden">
+                      <img src={v.cover_url} alt={v.titulo} loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    </div>
+                  )}
+                  <div className="p-8 flex-1">
+                    <div className="text-xs text-muted-foreground mb-2">{v.periodo}</div>
+                    <h3 className="font-display text-xl mb-1">{v.titulo}</h3>
+                    <div className="text-foreground/70 text-sm mb-3">{v.organizacao}</div>
+                    <p className="text-sm text-foreground/65 line-clamp-3">{v.descricao}</p>
+                  </div>
+                </div>
+              </Link>
             </Reveal>
           ))}
         </div>
