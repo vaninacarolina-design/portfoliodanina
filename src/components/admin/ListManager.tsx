@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { RichEditor } from "@/components/admin/RichEditor";
 import { uploadMedia } from "@/lib/upload";
 import { toast } from "sonner";
 import { Trash2, Plus, GripVertical, Paperclip, X } from "lucide-react";
@@ -22,7 +23,7 @@ import { CSS } from "@dnd-kit/utilities";
 interface Field {
   key: string;
   label: string;
-  type?: "text" | "textarea" | "date" | "files";
+  type?: "text" | "textarea" | "richtext" | "date" | "files" | "image" | "gallery";
 }
 
 interface Props {
