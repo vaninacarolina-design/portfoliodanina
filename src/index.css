@@ -70,7 +70,6 @@
 
 @layer base {
   * { @apply border-border; }
-  html { scroll-behavior: smooth; }
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "ss01", "cv11";
