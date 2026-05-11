@@ -140,7 +140,7 @@ const Index = () => {
                   <div className="mt-1 text-foreground/75 text-sm">{e.empresa}</div>
                 </div>
                 <div className="md:col-span-3 font-display text-2xl leading-tight">{e.cargo}</div>
-                <div className="md:col-span-6 text-base text-foreground/75 leading-relaxed">{e.descricao}</div>
+                <div className="md:col-span-6 prose-editorial text-base text-foreground/75 leading-relaxed" dangerouslySetInnerHTML={{ __html: e.descricao || "" }} />
               </div>
             </Reveal>
           ))}
