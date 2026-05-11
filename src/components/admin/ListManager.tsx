@@ -130,9 +130,45 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
     setForm({ ...form, [fieldKey]: form[fieldKey].filter((_: any, i: number) => i !== idx) });
   };
 
+  const addGalleryImages = async (e: React.ChangeEvent<HTMLInputElement>, fieldKey: string) => {
+    const files = Array.from(e.target.files || []); if (!files.length) return;
+    try {
+      const urls = await Promise.all(files.map(f => uploadMedia(f, "galeria")));
+      setForm({ ...form, [fieldKey]: [...(form[fieldKey] || []), ...urls] });
+      toast.success(`${urls.length} adicionada(s)`);
+    } catch (err: any) { toast.error(err.message || "Erro no upload"); }
+    finally { e.target.value = ""; }
+  };
+
   const renderField = (f: Field) => {
+    if (f.type === "richtext") return <RichEditor value={form[f.key] ?? ""} onChange={v => setForm({ ...form, [f.key]: v })} />;
     if (f.type === "textarea") return <Textarea rows={3} value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
     if (f.type === "date") return <Input type="date" value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
+    if (f.type === "image") return <ImageUpload value={form[f.key]} onChange={v => setForm({ ...form, [f.key]: v })} folder="lista" />;
+    if (f.type === "gallery") {
+      const urls: string[] = form[f.key] || [];
+      return (
+        <div className="space-y-2">
+          {urls.length > 0 && (
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+              {urls.map((url, i) => (
+                <div key={i} className="relative group border border-border">
+                  <img src={url} alt="" className="w-full aspect-square object-cover" />
+                  <button type="button" onClick={() => setForm({ ...form, [f.key]: urls.filter((_, k) => k !== i) })}
+                    className="absolute top-1 right-1 bg-foreground text-background p-1 opacity-0 group-hover:opacity-100 transition">
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <label>
+            <input type="file" accept="image/*" multiple onChange={e => addGalleryImages(e, f.key)} className="hidden" />
+            <Button type="button" variant="outline" size="sm" className="gap-2 cursor-pointer pointer-events-none"><Plus size={14} /> Adicionar imagens</Button>
+          </label>
+        </div>
+      );
+    }
     if (f.type === "files") {
       const items = form[f.key] || [];
       return (
