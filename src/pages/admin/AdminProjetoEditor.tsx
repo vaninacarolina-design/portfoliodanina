@@ -117,7 +117,7 @@ const AdminProjetoEditor = () => {
 
       <div>
         <Label>Descrição curta</Label>
-        <Textarea rows={2} value={f.descricao_curta ?? ""} onChange={e => set("descricao_curta", e.target.value)} />
+        <div className="mt-2"><RichEditor value={f.descricao_curta ?? ""} onChange={v => set("descricao_curta", v)} placeholder="Resumo curto do projeto…" /></div>
       </div>
 
       <div>

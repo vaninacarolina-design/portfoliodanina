@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, Extension } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import LinkExt from "@tiptap/extension-link";
 import ImageExt from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { FontFamily } from "@tiptap/extension-font-family";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough,
   Heading1, Heading2, Heading3, Pilcrow,
@@ -23,6 +25,30 @@ interface Props {
   placeholder?: string;
 }
 
+// Mark customizada para tamanho de fonte (usa style="font-size: …")
+const FontSize = Extension.create({
+  name: "fontSize",
+  addOptions() { return { types: ["textStyle"] as string[] }; },
+  addGlobalAttributes() {
+    return [{
+      types: this.options.types,
+      attributes: {
+        fontSize: {
+          default: null,
+          parseHTML: (el: HTMLElement) => el.style.fontSize?.replace(/['"]/g, "") || null,
+          renderHTML: (attrs: any) => attrs.fontSize ? { style: `font-size: ${attrs.fontSize}` } : {},
+        },
+      },
+    }];
+  },
+  addCommands() {
+    return {
+      setFontSize: (size: string) => ({ chain }: any) => chain().setMark("textStyle", { fontSize: size }).run(),
+      unsetFontSize: () => ({ chain }: any) => chain().setMark("textStyle", { fontSize: null }).removeEmptyTextStyle().run(),
+    } as any;
+  },
+});
+
 const Btn = ({ active, onClick, children, title }: any) => (
   <button type="button" onClick={onClick} title={title}
     className={cn("p-2 rounded-sm hover:bg-secondary transition", active && "bg-foreground text-background hover:bg-foreground")}>
@@ -32,12 +58,24 @@ const Btn = ({ active, onClick, children, title }: any) => (
 
 const Sep = () => <div className="w-px bg-border mx-1 self-stretch" />;
 
+const FONT_SIZES = ["12px", "14px", "16px", "18px", "20px", "24px", "32px", "48px", "64px"];
+const FONT_FAMILIES = [
+  { label: "Padrão", value: "" },
+  { label: "Display (Fraunces)", value: "'Fraunces', Georgia, serif" },
+  { label: "Sans (Inter)", value: "'Inter', system-ui, sans-serif" },
+  { label: "Serif", value: "Georgia, 'Times New Roman', serif" },
+  { label: "Monoespaçada", value: "'JetBrains Mono', ui-monospace, monospace" },
+];
+
 export const RichEditor = ({ value, onChange, placeholder }: Props) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
       Underline,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
+      TextStyle,
+      FontFamily.configure({ types: ["textStyle"] }),
+      FontSize,
       LinkExt.configure({ openOnClick: false, HTMLAttributes: { rel: "noreferrer", target: "_blank" } }),
       ImageExt,
       Placeholder.configure({ placeholder: placeholder || "Comece a escrever…" }),
@@ -45,7 +83,7 @@ export const RichEditor = ({ value, onChange, placeholder }: Props) => {
     content: value || "",
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
-      attributes: { class: "prose-editorial min-h-[300px] focus:outline-none p-4" },
+      attributes: { class: "prose-editorial min-h-[200px] focus:outline-none p-4" },
     },
   });
 
@@ -76,9 +114,38 @@ export const RichEditor = ({ value, onChange, placeholder }: Props) => {
     input.click();
   };
 
+  const currentFontSize = (editor.getAttributes("textStyle") as any).fontSize || "";
+  const currentFontFamily = (editor.getAttributes("textStyle") as any).fontFamily || "";
+
   return (
-    <div className="border border-input rounded-sm">
+    <div className="border border-input rounded-sm bg-background">
       <div className="flex flex-wrap items-center gap-1 p-2 border-b border-border bg-secondary/40 sticky top-0 z-10">
+        <select
+          value={currentFontFamily}
+          onChange={(e) => {
+            const v = e.target.value;
+            if (!v) editor.chain().focus().unsetFontFamily().run();
+            else editor.chain().focus().setFontFamily(v).run();
+          }}
+          className="text-xs border border-input bg-background px-2 py-1 rounded-sm"
+          title="Tipografia"
+        >
+          {FONT_FAMILIES.map(f => <option key={f.label} value={f.value}>{f.label}</option>)}
+        </select>
+        <select
+          value={currentFontSize}
+          onChange={(e) => {
+            const v = e.target.value;
+            if (!v) (editor.chain().focus() as any).unsetFontSize().run();
+            else (editor.chain().focus() as any).setFontSize(v).run();
+          }}
+          className="text-xs border border-input bg-background px-2 py-1 rounded-sm"
+          title="Tamanho da fonte"
+        >
+          <option value="">Tamanho</option>
+          {FONT_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <Sep />
         <Btn title="Parágrafo" active={editor.isActive("paragraph") && !editor.isActive("heading")} onClick={() => editor.chain().focus().setParagraph().run()}><Pilcrow size={15} /></Btn>
         <Btn title="Título 1" active={editor.isActive("heading", { level: 1 })} onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}><Heading1 size={15} /></Btn>
         <Btn title="Título 2" active={editor.isActive("heading", { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 size={15} /></Btn>

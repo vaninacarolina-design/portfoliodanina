@@ -65,10 +65,9 @@ const Index = () => {
                   </motion.span>
                 ))}
               </h1>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 1 }}
-                className="mt-8 max-w-xl text-base md:text-lg text-foreground/75 leading-relaxed">
-                {s?.hero_intro}
-              </motion.p>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 1 }}
+                className="mt-8 max-w-xl text-base md:text-lg text-foreground/75 leading-relaxed prose-editorial"
+                dangerouslySetInnerHTML={{ __html: s?.hero_intro || "" }} />
             </div>
             <div className="md:col-span-5 md:justify-self-end">
               <motion.div style={{ y: yImg }} className="relative aspect-[3/4] w-full max-w-sm overflow-hidden bg-secondary">
@@ -123,7 +122,7 @@ const Index = () => {
         <div className="grid md:grid-cols-12 gap-12">
           <Reveal className="md:col-span-4"><div className="text-eyebrow">— Sobre</div></Reveal>
           <Reveal delay={0.1} className="md:col-span-8">
-            <p className="text-display-md font-light">{s?.about_text}</p>
+            <div className="text-display-md font-light prose-editorial" dangerouslySetInnerHTML={{ __html: s?.about_text || "" }} />
           </Reveal>
         </div>
       </section>
@@ -140,7 +139,7 @@ const Index = () => {
                   <div className="mt-1 text-foreground/75 text-sm">{e.empresa}</div>
                 </div>
                 <div className="md:col-span-3 font-display text-2xl leading-tight">{e.cargo}</div>
-                <div className="md:col-span-6 text-base text-foreground/75 leading-relaxed">{e.descricao}</div>
+                <div className="md:col-span-6 prose-editorial text-base text-foreground/75 leading-relaxed" dangerouslySetInnerHTML={{ __html: e.descricao || "" }} />
               </div>
             </Reveal>
           ))}
@@ -157,7 +156,7 @@ const Index = () => {
                 <div className="text-xs text-muted-foreground mb-1">{f.periodo}</div>
                 <h3 className="font-display text-2xl">{f.titulo}</h3>
                 <div className="text-foreground/70">{f.instituicao}</div>
-                {f.descricao && <p className="text-sm text-foreground/65 mt-2">{f.descricao}</p>}
+                {f.descricao && <div className="prose-editorial text-sm text-foreground/65 mt-2" dangerouslySetInnerHTML={{ __html: f.descricao }} />}
               </div>
             </Reveal>
           ))}
@@ -170,12 +169,22 @@ const Index = () => {
           {voluntariados.length === 0 && <Empty label="Nenhuma atividade cadastrada ainda." />}
           {voluntariados.map((v: any, i) => (
             <Reveal key={v.id} delay={i * 0.05}>
-              <div className="bg-secondary/50 p-8 h-full">
-                <div className="text-xs text-muted-foreground mb-2">{v.periodo}</div>
-                <h3 className="font-display text-xl mb-1">{v.titulo}</h3>
-                <div className="text-foreground/70 text-sm mb-3">{v.organizacao}</div>
-                <p className="text-sm text-foreground/65">{v.descricao}</p>
-              </div>
+              <Link to="/atuacao-social" className="block group h-full">
+                <div className="bg-secondary/50 h-full flex flex-col">
+                  {v.cover_url && (
+                    <div className="aspect-[4/3] overflow-hidden">
+                      <img src={v.cover_url} alt={v.titulo} loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    </div>
+                  )}
+                  <div className="p-8 flex-1">
+                    <div className="text-xs text-muted-foreground mb-2">{v.periodo}</div>
+                    <h3 className="font-display text-xl mb-1">{v.titulo}</h3>
+                    <div className="text-foreground/70 text-sm mb-3">{v.organizacao}</div>
+                    <p className="text-sm text-foreground/65 line-clamp-3">{v.descricao}</p>
+                  </div>
+                </div>
+              </Link>
             </Reveal>
           ))}
         </div>

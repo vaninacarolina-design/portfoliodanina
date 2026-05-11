@@ -82,6 +82,7 @@ export type Database = {
       }
       projetos: {
         Row: {
+          blocos: Json
           categoria: string | null
           cliente: string | null
           conteudo: string | null
@@ -101,6 +102,7 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          blocos?: Json
           categoria?: string | null
           cliente?: string | null
           conteudo?: string | null
@@ -120,6 +122,7 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          blocos?: Json
           categoria?: string | null
           cliente?: string | null
           conteudo?: string | null
@@ -217,30 +220,45 @@ export type Database = {
       }
       voluntariados: {
         Row: {
+          conteudo: string | null
+          cover_url: string | null
           created_at: string
           descricao: string | null
+          destaque: string | null
+          galeria: Json
           id: string
           ordem: number
           organizacao: string
           periodo: string | null
+          slug: string | null
           titulo: string
         }
         Insert: {
+          conteudo?: string | null
+          cover_url?: string | null
           created_at?: string
           descricao?: string | null
+          destaque?: string | null
+          galeria?: Json
           id?: string
           ordem?: number
           organizacao: string
           periodo?: string | null
+          slug?: string | null
           titulo: string
         }
         Update: {
+          conteudo?: string | null
+          cover_url?: string | null
           created_at?: string
           descricao?: string | null
+          destaque?: string | null
+          galeria?: Json
           id?: string
           ordem?: number
           organizacao?: string
           periodo?: string | null
+          slug?: string | null
           titulo?: string
         }
         Relationships: []
