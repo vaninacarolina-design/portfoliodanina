@@ -77,13 +77,13 @@ const AdminConfig = () => {
       </div>
 
       <div>
-        <Label htmlFor="intro">Texto de apresentação (Hero)</Label>
-        <Textarea id="intro" rows={4} value={form.hero_intro} onChange={e => set("hero_intro", e.target.value)} />
+        <Label>Texto de apresentação (Hero)</Label>
+        <div className="mt-2"><RichEditor value={form.hero_intro ?? ""} onChange={v => set("hero_intro", v)} placeholder="Texto que aparece junto à sua foto…" /></div>
       </div>
 
       <div>
-        <Label htmlFor="about">Texto da seção Sobre</Label>
-        <Textarea id="about" rows={6} value={form.about_text} onChange={e => set("about_text", e.target.value)} />
+        <Label>Texto da seção Sobre</Label>
+        <div className="mt-2"><RichEditor value={form.about_text ?? ""} onChange={v => set("about_text", v)} placeholder="Conte sobre você…" /></div>
       </div>
 
       <div className="border-t border-border pt-8">
