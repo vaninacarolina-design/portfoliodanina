@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Projetos from "./pages/Projetos";
 import ProjetoDetalhe from "./pages/ProjetoDetalhe";
 import Contato from "./pages/Contato";
+import AtuacaoSocial from "./pages/AtuacaoSocial";
 import Auth from "./pages/Auth";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -36,6 +37,7 @@ const App = () => (
                 <Route path="/projetos" element={<Projetos />} />
                 <Route path="/projetos/:slug" element={<ProjetoDetalhe />} />
                 <Route path="/contato" element={<Contato />} />
+                <Route path="/atuacao-social" element={<AtuacaoSocial />} />
               </Route>
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<AdminLayout />}>
