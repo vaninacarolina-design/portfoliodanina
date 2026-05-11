@@ -65,10 +65,9 @@ const Index = () => {
                   </motion.span>
                 ))}
               </h1>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 1 }}
-                className="mt-8 max-w-xl text-base md:text-lg text-foreground/75 leading-relaxed">
-                {s?.hero_intro}
-              </motion.p>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 1 }}
+                className="mt-8 max-w-xl text-base md:text-lg text-foreground/75 leading-relaxed prose-editorial"
+                dangerouslySetInnerHTML={{ __html: s?.hero_intro || "" }} />
             </div>
             <div className="md:col-span-5 md:justify-self-end">
               <motion.div style={{ y: yImg }} className="relative aspect-[3/4] w-full max-w-sm overflow-hidden bg-secondary">
