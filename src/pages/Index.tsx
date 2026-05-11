@@ -169,7 +169,7 @@ const Index = () => {
           {voluntariados.length === 0 && <Empty label="Nenhuma atividade cadastrada ainda." />}
           {voluntariados.map((v: any, i) => (
             <Reveal key={v.id} delay={i * 0.05}>
-              <Link to="/atuacao-social" className="block bg-secropdary/50 group h-full">
+              <Link to="/atuacao-social" className="block group h-full">
                 <div className="bg-secondary/50 h-full flex flex-col">
                   {v.cover_url && (
                     <div className="aspect-[4/3] overflow-hidden">
