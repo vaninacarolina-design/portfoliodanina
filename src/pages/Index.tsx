@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { useRef, useState } from "react";
 import { ArrowUpRight, ArrowDown } from "lucide-react";
 
 const scrollToNext = () => {
@@ -13,14 +13,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/hooks/useSettings";
 import { Reveal } from "@/components/site/Reveal";
-import heroImg from "@/assets/hero-portrait.jpg";
 
 const Index = () => {
   const { data: s } = useSettings();
   const heroRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const yImg = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const yImg = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["0%", "12%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const { data: formacoes = [] } = useQuery({
     queryKey: ["formacoes"],
@@ -39,7 +40,7 @@ const Index = () => {
     queryFn: async () => (await supabase.from("projetos").select("*").eq("publicado", true).order("ordem").limit(3)).data ?? [],
   });
 
-  const heroImage = s?.hero_image_url || heroImg;
+  const heroImage = s?.hero_image_url || null;
 
   return (
     <>
@@ -70,8 +71,19 @@ const Index = () => {
               </motion.p>
             </div>
             <div className="md:col-span-5 md:justify-self-end">
-              <motion.div style={{ y: yImg }} className="relative aspect-[3/4] w-full max-w-sm overflow-hidden">
-                <img src={heroImage} alt={s?.hero_name ?? ""} className="w-full h-full object-cover" />
+              <motion.div style={{ y: yImg }} className="relative aspect-[3/4] w-full max-w-sm overflow-hidden bg-secondary">
+                {heroImage && (
+                  <img
+                    src={heroImage}
+                    alt={s?.hero_name ?? ""}
+                    loading="eager"
+                    // @ts-ignore
+                    fetchpriority="high"
+                    decoding="async"
+                    onLoad={() => setImgLoaded(true)}
+                    className={`w-full h-full object-cover transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+                  />
+                )}
               </motion.div>
             </div>
           </motion.div>
@@ -122,11 +134,13 @@ const Index = () => {
           {experiencias.length === 0 && <Empty label="Nenhuma experiência cadastrada ainda." />}
           {experiencias.map((e: any, i) => (
             <Reveal key={e.id} delay={i * 0.05}>
-              <div className="grid md:grid-cols-12 gap-6 py-8 group">
-                <div className="md:col-span-2 text-sm text-muted-foreground">{e.periodo}</div>
-                <div className="md:col-span-4 font-display text-2xl">{e.cargo}</div>
-                <div className="md:col-span-3 text-foreground/70">{e.empresa}</div>
-                <div className="md:col-span-3 text-sm text-foreground/65">{e.descricao}</div>
+              <div className="grid md:grid-cols-12 gap-6 md:gap-8 py-8 group">
+                <div className="md:col-span-3">
+                  <div className="text-sm text-muted-foreground">{e.periodo}</div>
+                  <div className="mt-1 text-foreground/75 text-sm">{e.empresa}</div>
+                </div>
+                <div className="md:col-span-3 font-display text-2xl leading-tight">{e.cargo}</div>
+                <div className="md:col-span-6 text-base text-foreground/75 leading-relaxed">{e.descricao}</div>
               </div>
             </Reveal>
           ))}
