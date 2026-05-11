@@ -63,7 +63,7 @@ const ProjetoDetalhe = () => {
             </dl>
           </Reveal>
           <Reveal delay={0.1} className="md:col-span-8">
-            {p.descricao_curta && <p className="text-xl md:text-2xl font-display mb-10 leading-snug">{p.descricao_curta}</p>}
+            {p.descricao_curta && <div className="text-xl md:text-2xl font-display mb-10 leading-snug prose-editorial" dangerouslySetInnerHTML={{ __html: p.descricao_curta }} />}
             {p.conteudo && <div className="prose-editorial" dangerouslySetInnerHTML={{ __html: p.conteudo }} />}
           </Reveal>
         </section>
