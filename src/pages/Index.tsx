@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { useRef, useState } from "react";
 import { ArrowUpRight, ArrowDown } from "lucide-react";
 
 const scrollToNext = () => {
@@ -13,14 +13,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/hooks/useSettings";
 import { Reveal } from "@/components/site/Reveal";
-import heroImg from "@/assets/hero-portrait.jpg";
 
 const Index = () => {
   const { data: s } = useSettings();
   const heroRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const yImg = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const yImg = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["0%", "12%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const { data: formacoes = [] } = useQuery({
     queryKey: ["formacoes"],
