@@ -134,11 +134,13 @@ const Index = () => {
           {experiencias.length === 0 && <Empty label="Nenhuma experiência cadastrada ainda." />}
           {experiencias.map((e: any, i) => (
             <Reveal key={e.id} delay={i * 0.05}>
-              <div className="grid md:grid-cols-12 gap-6 py-8 group">
-                <div className="md:col-span-2 text-sm text-muted-foreground">{e.periodo}</div>
-                <div className="md:col-span-4 font-display text-2xl">{e.cargo}</div>
-                <div className="md:col-span-3 text-foreground/70">{e.empresa}</div>
-                <div className="md:col-span-3 text-sm text-foreground/65">{e.descricao}</div>
+              <div className="grid md:grid-cols-12 gap-6 md:gap-8 py-8 group">
+                <div className="md:col-span-3">
+                  <div className="text-sm text-muted-foreground">{e.periodo}</div>
+                  <div className="mt-1 text-foreground/75 text-sm">{e.empresa}</div>
+                </div>
+                <div className="md:col-span-3 font-display text-2xl leading-tight">{e.cargo}</div>
+                <div className="md:col-span-6 text-base text-foreground/75 leading-relaxed">{e.descricao}</div>
               </div>
             </Reveal>
           ))}
