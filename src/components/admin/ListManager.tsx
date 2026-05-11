@@ -55,12 +55,19 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
 
   const startNew = () => {
     const blank: any = { ordem: items.length };
-    fields.forEach(f => blank[f.key] = f.type === "files" ? [] : "");
+    fields.forEach(f => {
+      if (f.type === "files" || f.type === "gallery") blank[f.key] = [];
+      else if (f.type === "image") blank[f.key] = null;
+      else blank[f.key] = "";
+    });
     setForm(blank); setEditing("new");
   };
   const startEdit = (it: any) => {
     const copy: any = { ...it };
-    fields.forEach(f => { if (f.type === "files" && !Array.isArray(copy[f.key])) copy[f.key] = []; });
+    fields.forEach(f => {
+      if (f.type === "files" && !Array.isArray(copy[f.key])) copy[f.key] = [];
+      if (f.type === "gallery" && !Array.isArray(copy[f.key])) copy[f.key] = [];
+    });
     setForm(copy); setEditing(it.id);
   };
 
@@ -69,8 +76,8 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
     fields.forEach(f => {
       let v = form[f.key];
       if (f.type === "date" && v === "") v = null;
-      if (f.type === "files" && !Array.isArray(v)) v = [];
-      payload[f.key] = v ?? (f.type === "files" ? [] : "");
+      if ((f.type === "files" || f.type === "gallery") && !Array.isArray(v)) v = [];
+      payload[f.key] = v ?? ((f.type === "files" || f.type === "gallery") ? [] : (f.type === "image" ? null : ""));
     });
     if (editing === "new") {
       const { error } = await supabase.from(table).insert(payload);
