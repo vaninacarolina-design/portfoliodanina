@@ -16,6 +16,8 @@ export type SiteSettings = {
   social_linkedin: string | null;
   social_behance: string | null;
   marquee_palavras: string[] | null;
+  sobre_blocos: any[] | null;
+  sobre_hero: any | null;
 };
 
 export const useSettings = () => useQuery({

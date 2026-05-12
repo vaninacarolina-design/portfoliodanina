@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { EditorialImageSingle, EditorialImageGallery } from "@/components/admin/EditorialImage";
 import { RichEditor } from "@/components/admin/RichEditor";
+import { RichEditorMini } from "@/components/admin/RichEditorMini";
 import { uploadMedia } from "@/lib/upload";
 import { toast } from "sonner";
 import { Trash2, Plus, GripVertical, Paperclip, X } from "lucide-react";
@@ -23,7 +25,7 @@ import { CSS } from "@dnd-kit/utilities";
 interface Field {
   key: string;
   label: string;
-  type?: "text" | "textarea" | "richtext" | "date" | "files" | "image" | "gallery";
+  type?: "text" | "richtext-mini" | "textarea" | "richtext" | "date" | "files" | "image" | "gallery";
 }
 
 interface Props {
@@ -142,32 +144,12 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
 
   const renderField = (f: Field) => {
     if (f.type === "richtext") return <RichEditor value={form[f.key] ?? ""} onChange={v => setForm({ ...form, [f.key]: v })} />;
+    if (f.type === "richtext-mini") return <RichEditorMini value={form[f.key] ?? ""} onChange={v => setForm({ ...form, [f.key]: v })} placeholder={f.label} />;
     if (f.type === "textarea") return <Textarea rows={3} value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
     if (f.type === "date") return <Input type="date" value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
-    if (f.type === "image") return <ImageUpload value={form[f.key]} onChange={v => setForm({ ...form, [f.key]: v })} folder="lista" />;
+    if (f.type === "image") return <EditorialImageSingle value={form[f.key]} onChange={v => setForm({ ...form, [f.key]: v })} folder="lista" />;
     if (f.type === "gallery") {
-      const urls: string[] = form[f.key] || [];
-      return (
-        <div className="space-y-2">
-          {urls.length > 0 && (
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
-              {urls.map((url, i) => (
-                <div key={i} className="relative group border border-border">
-                  <img src={url} alt="" className="w-full aspect-square object-cover" />
-                  <button type="button" onClick={() => setForm({ ...form, [f.key]: urls.filter((_, k) => k !== i) })}
-                    className="absolute top-1 right-1 bg-foreground text-background p-1 opacity-0 group-hover:opacity-100 transition">
-                    <X size={12} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-          <label>
-            <input type="file" accept="image/*" multiple onChange={e => addGalleryImages(e, f.key)} className="hidden" />
-            <Button type="button" variant="outline" size="sm" className="gap-2 cursor-pointer pointer-events-none"><Plus size={14} /> Adicionar imagens</Button>
-          </label>
-        </div>
-      );
+      return <EditorialImageGallery value={form[f.key] || []} onChange={v => setForm({ ...form, [f.key]: v })} folder="galeria" />;
     }
     if (f.type === "files") {
       const items = form[f.key] || [];
@@ -193,7 +175,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
         </div>
       );
     }
-    return <Input value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
+    return <RichEditorMini value={form[f.key] ?? ""} onChange={v => setForm({ ...form, [f.key]: v })} placeholder={f.label} />;
   };
 
   return (
