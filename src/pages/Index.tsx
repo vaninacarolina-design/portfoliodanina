@@ -214,14 +214,14 @@ const Index = () => {
                 <Link to={`/projetos/${p.slug}`} className="block group">
                   <div className="aspect-[4/5] overflow-hidden bg-secondary mb-5">
                     {p.cover_url ? (
-                      <img src={p.cover_url} alt={p.titulo} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <img src={p.cover_url} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     ) : <div className="w-full h-full bg-muted" />}
                   </div>
                   <div className="flex items-baseline justify-between gap-4">
-                    <h3 className="font-display text-2xl md:text-3xl">{p.titulo}</h3>
+                    <RichText as="h3" html={p.titulo} className="font-display text-2xl md:text-3xl" />
                     <ArrowUpRight className="shrink-0 transition-transform group-hover:rotate-45" size={20} />
                   </div>
-                  {p.categoria && <div className="text-sm text-muted-foreground mt-1">{p.categoria}</div>}
+                  {p.categoria && <RichText html={p.categoria} className="text-sm text-muted-foreground mt-1 block" />}
                 </Link>
               </Reveal>
             ))}
