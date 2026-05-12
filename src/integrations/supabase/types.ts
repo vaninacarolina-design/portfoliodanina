@@ -154,6 +154,8 @@ export type Database = {
           hero_subtitle: string
           id: string
           marquee_palavras: Json
+          sobre_blocos: Json
+          sobre_hero: Json | null
           social_behance: string | null
           social_instagram: string | null
           social_linkedin: string | null
@@ -171,6 +173,8 @@ export type Database = {
           hero_subtitle?: string
           id?: string
           marquee_palavras?: Json
+          sobre_blocos?: Json
+          sobre_hero?: Json | null
           social_behance?: string | null
           social_instagram?: string | null
           social_linkedin?: string | null
@@ -188,6 +192,8 @@ export type Database = {
           hero_subtitle?: string
           id?: string
           marquee_palavras?: Json
+          sobre_blocos?: Json
+          sobre_hero?: Json | null
           social_behance?: string | null
           social_instagram?: string | null
           social_linkedin?: string | null
