@@ -236,6 +236,8 @@ const SortableRow = ({ item, fields, onEdit, onRemove }: any) => {
   );
 };
 
+const stripHtml = (v: any) => typeof v === "string" ? v.replace(/<[^>]+>/g, "").trim() : (v ?? "");
+
 const Row = ({ item, fields, onEdit, onRemove, dragHandle, draggable }: any) => (
   <div className="py-4 flex items-center gap-3">
     {draggable && (
@@ -244,8 +246,8 @@ const Row = ({ item, fields, onEdit, onRemove, dragHandle, draggable }: any) => 
       </button>
     )}
     <div className="flex-1 cursor-pointer min-w-0" onClick={() => onEdit(item)}>
-      <div className="font-medium truncate">{item[fields[0].key]}</div>
-      <div className="text-sm text-muted-foreground truncate">{item[fields[1]?.key]}</div>
+      <div className="font-medium truncate">{stripHtml(item[fields[0].key]) || "—"}</div>
+      <div className="text-sm text-muted-foreground truncate">{stripHtml(item[fields[1]?.key])}</div>
     </div>
     <Button variant="ghost" size="icon" onClick={() => onRemove(item.id)}><Trash2 size={16} /></Button>
   </div>
