@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
+import { RichText } from "@/components/site/RichText";
 
 const Projetos = () => {
   const { data: projetos = [], isLoading } = useQuery({
@@ -14,7 +15,7 @@ const Projetos = () => {
   return (
     <>
       <Helmet><title>Projetos · Vanina Carolina</title></Helmet>
-      <section className="container-editorial pt-20 pb-16">
+      <section className="container-editorial pt-24 pb-12">
         <Reveal>
           <div className="text-eyebrow mb-6">— Portfólio</div>
           <h1 className="text-display-xl">Projetos</h1>
@@ -28,29 +29,40 @@ const Projetos = () => {
           <div className="py-24 text-center text-muted-foreground italic">Em breve novos projetos.</div>
         )}
 
-        {/* Grid uniforme — fileira de imagens clicáveis */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {projetos.map((p: any, i) => (
-            <Reveal key={p.id} delay={(i % 3) * 0.08}>
-              <Link to={`/projetos/${p.slug}`} className="group block">
-                <div className="aspect-[4/5] overflow-hidden bg-secondary mb-4 relative">
-                  {p.cover_url ? (
-                    <img src={p.cover_url} alt={p.titulo} loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-[900ms] group-hover:scale-105" />
-                  ) : <div className="w-full h-full" />}
-                  <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors" />
-                </div>
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    {p.categoria && <div className="text-eyebrow mb-1.5">{p.categoria}</div>}
-                    <h2 className="font-display text-xl md:text-2xl leading-tight truncate">{p.titulo}</h2>
-                    {p.subtitulo && <p className="text-sm text-foreground/70 mt-1 line-clamp-2">{p.subtitulo}</p>}
+        {/* Grid editorial 12-col com offset alternado para respiro */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-24">
+          {projetos.map((p: any, i) => {
+            // padrão editorial: alterna 5/5/2 — esquerda larga, direita média deslocada
+            const positions = [
+              "md:col-span-7",
+              "md:col-span-5 md:mt-32",
+              "md:col-span-5 md:col-start-2",
+              "md:col-span-6 md:col-start-7 md:mt-20",
+              "md:col-span-8 md:col-start-3",
+            ];
+            const cls = positions[i % positions.length];
+            return (
+              <Reveal key={p.id} delay={(i % 3) * 0.08} className={cls}>
+                <Link to={`/projetos/${p.slug}`} className="group block">
+                  <div className="aspect-[4/5] overflow-hidden bg-secondary mb-5 relative">
+                    {p.cover_url ? (
+                      <img src={p.cover_url} alt="" loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-[900ms] group-hover:scale-105" />
+                    ) : <div className="w-full h-full" />}
+                    <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors" />
                   </div>
-                  <ArrowUpRight className="mt-1 shrink-0 transition-transform group-hover:rotate-45" size={20} />
-                </div>
-              </Link>
-            </Reveal>
-          ))}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      {p.categoria && <RichText html={p.categoria} className="text-eyebrow mb-1.5 block" />}
+                      <RichText as="h2" html={p.titulo} className="font-display text-2xl md:text-3xl leading-tight" />
+                      {p.subtitulo && <RichText html={p.subtitulo} className="text-sm text-foreground/70 mt-1 block" />}
+                    </div>
+                    <ArrowUpRight className="mt-1 shrink-0 transition-transform group-hover:rotate-45" size={20} />
+                  </div>
+                </Link>
+              </Reveal>
+            );
+          })}
         </div>
       </section>
     </>
