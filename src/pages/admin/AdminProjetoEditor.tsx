@@ -9,9 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { RichEditor } from "@/components/admin/RichEditor";
-import { uploadMedia } from "@/lib/upload";
+import { RichEditorMini } from "@/components/admin/RichEditorMini";
+import { EditorialImageGallery } from "@/components/admin/EditorialImage";
 import { toast } from "sonner";
-import { ArrowLeft, Trash2, Plus } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 const slugify = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 80);
