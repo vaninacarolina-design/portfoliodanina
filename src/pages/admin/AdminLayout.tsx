@@ -7,7 +7,8 @@ import { LogOut } from "lucide-react";
 const links = [
   { to: "/admin", label: "Dashboard", end: true },
   { to: "/admin/projetos", label: "Projetos" },
-  { to: "/admin/configuracoes", label: "Home & Sobre" },
+  { to: "/admin/configuracoes", label: "Home & Hero" },
+  { to: "/admin/sobre", label: "Sobre Mim" },
   { to: "/admin/formacoes", label: "Formações" },
   { to: "/admin/experiencias", label: "Experiências" },
   { to: "/admin/voluntariados", label: "Voluntariado" },

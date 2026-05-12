@@ -52,8 +52,8 @@ const AdminProjetos = () => {
               {p.cover_url && <img src={p.cover_url} alt="" className="w-full h-full object-cover" />}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-medium truncate">{p.titulo}</div>
-              <div className="text-sm text-muted-foreground truncate">{p.categoria || "—"} · /{p.slug}</div>
+              <div className="font-medium truncate">{(p.titulo || "").replace(/<[^>]+>/g, "") || "—"}</div>
+              <div className="text-sm text-muted-foreground truncate">{(p.categoria || "").replace(/<[^>]+>/g, "") || "—"} · /{p.slug}</div>
             </div>
             <div className={`text-xs px-2 py-1 ${p.publicado ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>
               {p.publicado ? "Publicado" : "Rascunho"}

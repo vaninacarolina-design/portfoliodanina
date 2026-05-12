@@ -141,4 +141,16 @@
   .prose-editorial img { @apply my-8 w-full rounded-sm; }
   .prose-editorial strong { @apply font-semibold; }
   .prose-editorial em { @apply italic; }
+  .prose-editorial blockquote { @apply font-display text-2xl md:text-4xl italic font-light my-12 pl-6 border-l-2 border-accent text-foreground/85; }
+
+  /* Inline rich text — usado em títulos, frases curtas, subtítulos.
+     Não adiciona margens nem altera tamanhos, respeita o estilo do contexto. */
+  .prose-inline { display: inline; }
+  .prose-inline p { display: inline; margin: 0; }
+  .prose-inline strong { font-weight: 600; }
+  .prose-inline em { font-style: italic; }
+  .prose-inline a { @apply text-accent underline underline-offset-4; }
+  .prose-inline ul, .prose-inline ol { display: block; padding-left: 1.25rem; margin: 0.25rem 0; }
+  .prose-inline ul { list-style: disc; }
+  .prose-inline ol { list-style: decimal; }
 }

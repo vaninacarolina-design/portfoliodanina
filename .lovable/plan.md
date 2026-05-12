@@ -1,98 +1,52 @@
-# Plano de melhorias — portfólio Vanina
+# Plano de alterações
 
-Baseado na referência https://chiaraluzzana.com/work/lavazza (layout editorial, blocos alternados de texto+imagem, frases destaque, galerias livres).
+## 1. Controle de imagens (tamanho, recorte, enquadramento)
+Criar novo componente `ImageFrame` (admin) que estende `ImageUpload`:
+- Campos extras salvos junto com cada imagem como objeto `{ url, position, fit, ratio, size }`:
+  - **position**: `object-position` ajustável via 2 sliders X/Y (0–100%) + preview ao vivo
+  - **fit**: `cover` | `contain` (sem distorcer — nunca `fill`)
+  - **ratio**: `auto` | `1:1` | `4:5` | `3:4` | `16:9` | `21:9`
+  - **size**: `s` | `m` | `l` | `xl` (largura relativa no grid)
+- Para a galeria (`gallery`), cada item passa de `string` para esse objeto. Compatibilidade retroativa: strings continuam funcionando (assumem defaults `cover`, centro, `auto`, `m`).
+- Renderização pública via novo `<EditorialImage>` que aplica `aspect-ratio`, `object-fit`, `object-position` e `col-span` conforme `size`.
 
----
+## 2. Grid editorial mais clean
+Refatorar grids em `Projetos.tsx`, `ProjetoDetalhe.tsx`, `AtuacaoSocial.tsx`:
+- Grid base 12 colunas, gap consistente (`gap-x-6 gap-y-16`)
+- Tamanhos `s/m/l/xl` mapeiam para `col-span-{4,6,8,12}` em desktop; mobile sempre full
+- Composição alterna automaticamente offsets (start-2, start-4) para respirar
+- Mantém alinhamento à baseline tipográfica (sem cards/sombras decorativas)
 
-## Fase 1 — Correções rápidas (entregar primeiro)
+## 3. Rich Text em todos os campos
+- Criar variante `RichEditorMini` (mesma engine Tiptap, sem títulos/listas, toolbar compacta com fonte/tamanho/negrito/itálico/sublinhado/alinhamento/cor/link) para campos curtos: títulos, subtítulos, frases.
+- Adicionar tipo `richtext-mini` no `ListManager` e usar em `AdminConfig` (hero_name, hero_subtitle, marquee palavras), `AdminLists` (cargo, empresa, instituição, organização, período, frase de destaque), `AdminProjetoEditor` (titulo, subtitulo, descricao_curta, cliente, papel, periodo).
+- No frontend, esses campos passam a ser renderizados com `dangerouslySetInnerHTML` numa classe `prose-inline` (sem margens de bloco).
+- Sanitização leve com `dompurify`.
 
-### 1. Imagem do hero não troca mais por outra
-- Remover o `import heroImg from "@/assets/hero-portrait.jpg"` como fallback no `Index.tsx`.
-- Enquanto a configuração carrega, mostrar área neutra (cor sólida do design system), não outra foto.
-- Adicionar `loading="eager"` + `fetchpriority="high"` na imagem real e fade-in suave quando carregar.
+## 4. Nova página "Sobre Mim"
+- Rota `/sobre` adicionada ao `App.tsx` e ao `Navbar.tsx` (entre "Home" e "Projetos").
+- Nova tabela `sobre_blocos` (jsonb-driven) ou reaproveitar `site_settings` com novo campo `sobre_blocos jsonb` (lista de blocos editoriais). Vou pelo segundo (menos schema novo).
+- Tipos de bloco: `texto` (richtext largo), `imagem` (com size/ratio/position), `par-texto-imagem` (lado a lado, lado configurável), `frase-grande` (pull-quote display), `galeria` (2–3 col), `espaço` (vertical spacer).
+- Página `Sobre.tsx` renderiza blocos na ordem, layout 12-col com offsets generosos, tipografia Fraunces gigante para frases, respiro vertical (`py-24`).
+- Admin `AdminSobre.tsx`: editor de blocos drag-to-reorder, com formulário por tipo, usando `EditorialImage` controls e `RichEditor`.
 
-### 2. Menu ganha "Atuação Social"
-- Adicionar item no `Navbar.tsx`: Home · Projetos · Atuação Social · Contato.
-- Rota nova `/atuacao-social` (página dedicada — ver Fase 2).
+## 5. Banco
+Migration única:
+- `ALTER TABLE site_settings ADD COLUMN sobre_blocos jsonb NOT NULL DEFAULT '[]'`
+- `ALTER TABLE site_settings ADD COLUMN sobre_hero jsonb` (cover image com position)
 
-### 3. Scroll mais fluido
-- Remover `scroll-behavior: smooth` global do CSS (entra em conflito com `framer-motion useScroll` do hero).
-- Trocar parallax do hero por transform mais leve (ou desativar em mobile via `useReducedMotion`).
-- `will-change` apenas onde necessário; remover de elementos estáticos.
+## Arquivos principais
+- novo: `src/components/admin/EditorialImage.tsx` (controls)
+- novo: `src/components/site/EditorialImage.tsx` (display)
+- novo: `src/components/admin/RichEditorMini.tsx`
+- novo: `src/pages/Sobre.tsx`, `src/pages/admin/AdminSobre.tsx`
+- editado: `ListManager`, `RichEditor` (extrair core), `Navbar`, `App`, `AdminLayout` sidebar, todas Admin pages, Projetos/ProjetoDetalhe/AtuacaoSocial (grid + EditorialImage).
 
-### 4. Layout "Trajetória profissional" redistribuído
-Novo grid (12 colunas):
-```
-[ ano · 2 col ] [ cargo · 4 col ] [ descrição rica · 6 col ]
-                [ empresa abaixo do ano ]
-```
-Empresa fica **abaixo do ano** (coluna esquerda), liberando 6 colunas inteiras para a descrição.
-
----
-
-## Fase 2 — Editor universal + páginas editoriais
-
-### 5. RichEditor expandido (font size + font family)
-Adicionar ao `RichEditor.tsx`:
-- Extensão `@tiptap/extension-font-family` (Fraunces / Inter / serif / sans / mono).
-- Extensão `@tiptap/extension-text-style` + custom mark de tamanho (12 / 14 / 16 / 18 / 24 / 32 / 48 px).
-- Dropdowns no toolbar (família + tamanho), além dos botões já existentes (B / I / U / alinhamento / listas / link / imagem / títulos).
-
-### 6. RichEditor em **todos** os campos de texto
-Substituir `<Textarea>` e `<Input>` longos por `<RichEditor>` em:
-- `AdminConfig.tsx`: `hero_intro`, `about_text`, `contact_intro`.
-- `AdminContato.tsx`: textos auxiliares.
-- `ListManager` (formacoes, experiencias, voluntariados): campo `descricao` vira rich text.
-- `AdminProjetoEditor.tsx`: `descricao_curta` vira rich text.
-
-E nas páginas públicas, renderizar via `dangerouslySetInnerHTML` com a classe `prose-editorial` (já existe no `index.css`).
-
-### 7. Atuação Social — nova página `/atuacao-social`
-Layout editorial (estilo Chiara/Lavazza):
-- Hero com título grande + intro.
-- Cards atuais expandem ("Ver mais") OU cada voluntariado abre página `/atuacao-social/:slug` com:
-  - Texto longo (rich text)
-  - Galeria de fotos
-  - Frases de destaque grandes (pull-quotes)
-  - Blocos texto+imagem alternados (esquerda/direita)
-
-**Schema novo na tabela `voluntariados`:**
-- `slug` (text, unique)
-- `cover_url` (text)
-- `galeria` (jsonb, default `[]`)
-- `conteudo` (text, HTML rich)
-- `destaque` (text — frase grande)
-
-### 8. Projetos — detalhe editorial livre
-Refatorar `ProjetoDetalhe.tsx` para layout livre (mesmo espírito da referência):
-- Cover full-bleed.
-- Blocos: texto largo, imagem grande, par texto+imagem, galeria de 2/3 colunas, frase destaque.
-- Ordem e composição dos blocos definida no admin via novo campo `blocos` (jsonb com tipo + conteúdo) — editor visual de blocos no `AdminProjetoEditor`.
-
-**Schema novo em `projetos`:**
-- `blocos` (jsonb, default `[]`) — array de `{ tipo: 'texto' | 'imagem' | 'par' | 'galeria' | 'destaque' | 'video', conteudo, ... }`.
-
-(O conteúdo livre antigo continua funcionando como fallback.)
-
-### 9. Atualizar admin de Voluntariados
-- `ListManager` ganha capa, galeria, slug, conteúdo rico e frase destaque para voluntariados.
-
----
-
-## Detalhes técnicos
-
-- **Migrations** necessárias (Fase 2): adicionar colunas em `voluntariados` e `projetos` + RLS já existente cobre.
-- **Dependências novas**: `@tiptap/extension-font-family`, `@tiptap/extension-text-style`, `@tiptap/extension-font-size` (ou mark customizada).
-- **Performance scroll**: medir com `browser--performance_profile` antes/depois.
-- **Sanitização HTML**: usar `dompurify` antes de injetar HTML do CMS nas páginas públicas.
-
----
-
-## Ordem de execução sugerida
-
-1. Aprovar este plano.
-2. Implementar Fase 1 inteira (1 mensagem).
-3. Validar visualmente.
-4. Implementar Fase 2 — começa por migrations (precisam aprovação separada), depois código.
-
-Posso começar pela Fase 1 assim que você aprovar?
+## Ordem de execução
+1. Migration `sobre_blocos`
+2. `RichEditorMini` + sanitização
+3. `EditorialImage` (admin + site)
+4. Refator grids
+5. Página Sobre + admin
+6. Substituição RichEditor mini em todos campos curtos
+7. QA visual

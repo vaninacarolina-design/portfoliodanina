@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/hooks/useSettings";
 import { Reveal } from "@/components/site/Reveal";
+import { RichText } from "@/components/site/RichText";
 
 const Index = () => {
   const { data: s } = useSettings();
@@ -45,8 +46,8 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>{s?.hero_name ?? "Vanina Carolina"} — Portfólio</title>
-        <meta name="description" content={s?.hero_intro ?? ""} />
+        <title>{(s?.hero_name ?? "Vanina Carolina").replace(/<[^>]+>/g, "")} — Portfólio</title>
+        <meta name="description" content={(s?.hero_intro ?? "").replace(/<[^>]+>/g, "").slice(0, 155)} />
       </Helmet>
 
       {/* HERO */}
@@ -57,13 +58,7 @@ const Index = () => {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
                 className="text-eyebrow mb-6">Portfólio · 2026</motion.div>
               <h1 className="text-display-xl">
-                {(s?.hero_name ?? "Vanina Carolina").split(" ").map((w, i) => (
-                  <motion.span key={i} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.9, delay: 0.1 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                    className="inline-block mr-[0.25em]">
-                    {i === 1 ? <em className="italic font-light">{w}</em> : w}
-                  </motion.span>
-                ))}
+                <RichText html={s?.hero_name ?? "Vanina Carolina"} />
               </h1>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 1 }}
                 className="mt-8 max-w-xl text-base md:text-lg text-foreground/75 leading-relaxed prose-editorial"
@@ -135,10 +130,10 @@ const Index = () => {
             <Reveal key={e.id} delay={i * 0.05}>
               <div className="grid md:grid-cols-12 gap-6 md:gap-8 py-8 group">
                 <div className="md:col-span-3">
-                  <div className="text-sm text-muted-foreground">{e.periodo}</div>
-                  <div className="mt-1 text-foreground/75 text-sm">{e.empresa}</div>
+                  <RichText html={e.periodo} className="text-sm text-muted-foreground" />
+                  <RichText html={e.empresa} className="mt-1 text-foreground/75 text-sm" />
                 </div>
-                <div className="md:col-span-3 font-display text-2xl leading-tight">{e.cargo}</div>
+                <RichText as="div" html={e.cargo} className="md:col-span-3 font-display text-2xl leading-tight" />
                 <div className="md:col-span-6 prose-editorial text-base text-foreground/75 leading-relaxed" dangerouslySetInnerHTML={{ __html: e.descricao || "" }} />
               </div>
             </Reveal>
@@ -153,9 +148,9 @@ const Index = () => {
           {formacoes.map((f: any, i) => (
             <Reveal key={f.id} delay={i * 0.05}>
               <div className="border-l-2 border-accent pl-5">
-                <div className="text-xs text-muted-foreground mb-1">{f.periodo}</div>
-                <h3 className="font-display text-2xl">{f.titulo}</h3>
-                <div className="text-foreground/70">{f.instituicao}</div>
+                <RichText html={f.periodo} className="text-xs text-muted-foreground mb-1 block" />
+                <RichText as="h3" html={f.titulo} className="font-display text-2xl" />
+                <RichText html={f.instituicao} className="text-foreground/70" />
                 {f.descricao && <div className="prose-editorial text-sm text-foreground/65 mt-2" dangerouslySetInnerHTML={{ __html: f.descricao }} />}
               </div>
             </Reveal>
@@ -173,14 +168,14 @@ const Index = () => {
                 <div className="bg-secondary/50 h-full flex flex-col">
                   {v.cover_url && (
                     <div className="aspect-[4/3] overflow-hidden">
-                      <img src={v.cover_url} alt={v.titulo} loading="lazy"
+                      <img src={v.cover_url} alt="" loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     </div>
                   )}
                   <div className="p-8 flex-1">
-                    <div className="text-xs text-muted-foreground mb-2">{v.periodo}</div>
-                    <h3 className="font-display text-xl mb-1">{v.titulo}</h3>
-                    <div className="text-foreground/70 text-sm mb-3">{v.organizacao}</div>
+                    <RichText html={v.periodo} className="text-xs text-muted-foreground mb-2 block" />
+                    <RichText as="h3" html={v.titulo} className="font-display text-xl mb-1" />
+                    <RichText html={v.organizacao} className="text-foreground/70 text-sm mb-3" />
                     <p className="text-sm text-foreground/65 line-clamp-3">{v.descricao}</p>
                   </div>
                 </div>
@@ -213,14 +208,14 @@ const Index = () => {
                 <Link to={`/projetos/${p.slug}`} className="block group">
                   <div className="aspect-[4/5] overflow-hidden bg-secondary mb-5">
                     {p.cover_url ? (
-                      <img src={p.cover_url} alt={p.titulo} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <img src={p.cover_url} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     ) : <div className="w-full h-full bg-muted" />}
                   </div>
                   <div className="flex items-baseline justify-between gap-4">
-                    <h3 className="font-display text-2xl md:text-3xl">{p.titulo}</h3>
+                    <RichText as="h3" html={p.titulo} className="font-display text-2xl md:text-3xl" />
                     <ArrowUpRight className="shrink-0 transition-transform group-hover:rotate-45" size={20} />
                   </div>
-                  {p.categoria && <div className="text-sm text-muted-foreground mt-1">{p.categoria}</div>}
+                  {p.categoria && <RichText html={p.categoria} className="text-sm text-muted-foreground mt-1 block" />}
                 </Link>
               </Reveal>
             ))}

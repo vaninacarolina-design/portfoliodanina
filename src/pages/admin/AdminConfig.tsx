@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { RichEditor } from "@/components/admin/RichEditor";
+import { RichEditorMini } from "@/components/admin/RichEditorMini";
 import { toast } from "sonner";
 import { Plus, X } from "lucide-react";
 
@@ -67,13 +68,13 @@ const AdminConfig = () => {
       </div>
 
       <div>
-        <Label htmlFor="n">Nome em destaque</Label>
-        <Input id="n" value={form.hero_name} onChange={e => set("hero_name", e.target.value)} />
+        <Label>Nome em destaque</Label>
+        <div className="mt-1.5"><RichEditorMini value={form.hero_name} onChange={v => set("hero_name", v)} placeholder="Seu nome" /></div>
       </div>
 
       <div>
-        <Label htmlFor="sub">Subtítulo curto</Label>
-        <Input id="sub" value={form.hero_subtitle} onChange={e => set("hero_subtitle", e.target.value)} />
+        <Label>Subtítulo curto</Label>
+        <div className="mt-1.5"><RichEditorMini value={form.hero_subtitle} onChange={v => set("hero_subtitle", v)} placeholder="Subtítulo" /></div>
       </div>
 
       <div>
