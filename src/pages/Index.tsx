@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/hooks/useSettings";
 import { Reveal } from "@/components/site/Reveal";
+import { RichText } from "@/components/site/RichText";
 
 const Index = () => {
   const { data: s } = useSettings();
@@ -135,10 +136,10 @@ const Index = () => {
             <Reveal key={e.id} delay={i * 0.05}>
               <div className="grid md:grid-cols-12 gap-6 md:gap-8 py-8 group">
                 <div className="md:col-span-3">
-                  <div className="text-sm text-muted-foreground">{e.periodo}</div>
-                  <div className="mt-1 text-foreground/75 text-sm">{e.empresa}</div>
+                  <RichText html={e.periodo} className="text-sm text-muted-foreground" />
+                  <RichText html={e.empresa} className="mt-1 text-foreground/75 text-sm" />
                 </div>
-                <div className="md:col-span-3 font-display text-2xl leading-tight">{e.cargo}</div>
+                <RichText as="div" html={e.cargo} className="md:col-span-3 font-display text-2xl leading-tight" />
                 <div className="md:col-span-6 prose-editorial text-base text-foreground/75 leading-relaxed" dangerouslySetInnerHTML={{ __html: e.descricao || "" }} />
               </div>
             </Reveal>
@@ -153,9 +154,9 @@ const Index = () => {
           {formacoes.map((f: any, i) => (
             <Reveal key={f.id} delay={i * 0.05}>
               <div className="border-l-2 border-accent pl-5">
-                <div className="text-xs text-muted-foreground mb-1">{f.periodo}</div>
-                <h3 className="font-display text-2xl">{f.titulo}</h3>
-                <div className="text-foreground/70">{f.instituicao}</div>
+                <RichText html={f.periodo} className="text-xs text-muted-foreground mb-1 block" />
+                <RichText as="h3" html={f.titulo} className="font-display text-2xl" />
+                <RichText html={f.instituicao} className="text-foreground/70" />
                 {f.descricao && <div className="prose-editorial text-sm text-foreground/65 mt-2" dangerouslySetInnerHTML={{ __html: f.descricao }} />}
               </div>
             </Reveal>
@@ -173,14 +174,14 @@ const Index = () => {
                 <div className="bg-secondary/50 h-full flex flex-col">
                   {v.cover_url && (
                     <div className="aspect-[4/3] overflow-hidden">
-                      <img src={v.cover_url} alt={v.titulo} loading="lazy"
+                      <img src={v.cover_url} alt="" loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     </div>
                   )}
                   <div className="p-8 flex-1">
-                    <div className="text-xs text-muted-foreground mb-2">{v.periodo}</div>
-                    <h3 className="font-display text-xl mb-1">{v.titulo}</h3>
-                    <div className="text-foreground/70 text-sm mb-3">{v.organizacao}</div>
+                    <RichText html={v.periodo} className="text-xs text-muted-foreground mb-2 block" />
+                    <RichText as="h3" html={v.titulo} className="font-display text-xl mb-1" />
+                    <RichText html={v.organizacao} className="text-foreground/70 text-sm mb-3" />
                     <p className="text-sm text-foreground/65 line-clamp-3">{v.descricao}</p>
                   </div>
                 </div>
