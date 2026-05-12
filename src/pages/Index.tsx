@@ -46,8 +46,8 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>{s?.hero_name ?? "Vanina Carolina"} — Portfólio</title>
-        <meta name="description" content={s?.hero_intro ?? ""} />
+        <title>{(s?.hero_name ?? "Vanina Carolina").replace(/<[^>]+>/g, "")} — Portfólio</title>
+        <meta name="description" content={(s?.hero_intro ?? "").replace(/<[^>]+>/g, "").slice(0, 155)} />
       </Helmet>
 
       {/* HERO */}
@@ -58,13 +58,7 @@ const Index = () => {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
                 className="text-eyebrow mb-6">Portfólio · 2026</motion.div>
               <h1 className="text-display-xl">
-                {(s?.hero_name ?? "Vanina Carolina").split(" ").map((w, i) => (
-                  <motion.span key={i} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.9, delay: 0.1 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                    className="inline-block mr-[0.25em]">
-                    {i === 1 ? <em className="italic font-light">{w}</em> : w}
-                  </motion.span>
-                ))}
+                <RichText html={s?.hero_name ?? "Vanina Carolina"} />
               </h1>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 1 }}
                 className="mt-8 max-w-xl text-base md:text-lg text-foreground/75 leading-relaxed prose-editorial"
