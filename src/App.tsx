@@ -11,6 +11,7 @@ import Projetos from "./pages/Projetos";
 import ProjetoDetalhe from "./pages/ProjetoDetalhe";
 import Contato from "./pages/Contato";
 import AtuacaoSocial from "./pages/AtuacaoSocial";
+import Sobre from "./pages/Sobre";
 import Auth from "./pages/Auth";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -19,6 +20,7 @@ import AdminProjetoEditor from "./pages/admin/AdminProjetoEditor";
 import AdminConfig from "./pages/admin/AdminConfig";
 import AdminContato from "./pages/admin/AdminContato";
 import { AdminFormacoes, AdminExperiencias, AdminVoluntariados } from "./pages/admin/AdminLists";
+import AdminSobre from "./pages/admin/AdminSobre";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,8 +38,9 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/projetos" element={<Projetos />} />
                 <Route path="/projetos/:slug" element={<ProjetoDetalhe />} />
-                <Route path="/contato" element={<Contato />} />
+                <Route path="/sobre" element={<Sobre />} />
                 <Route path="/atuacao-social" element={<AtuacaoSocial />} />
+                <Route path="/contato" element={<Contato />} />
               </Route>
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<AdminLayout />}>
@@ -45,6 +48,7 @@ const App = () => (
                 <Route path="projetos" element={<AdminProjetos />} />
                 <Route path="projetos/:id" element={<AdminProjetoEditor />} />
                 <Route path="configuracoes" element={<AdminConfig />} />
+                <Route path="sobre" element={<AdminSobre />} />
                 <Route path="contato" element={<AdminContato />} />
                 <Route path="formacoes" element={<AdminFormacoes />} />
                 <Route path="experiencias" element={<AdminExperiencias />} />
