@@ -14,7 +14,8 @@ import { EditorialImageGallery } from "@/components/admin/EditorialImage";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 
-const slugify = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+const stripHtml = (s: string) => (s || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+const slugify = (s: string) => stripHtml(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 80);
 
 const AdminProjetoEditor = () => {
@@ -42,7 +43,7 @@ const AdminProjetoEditor = () => {
   const set = (k: string, v: any) => setF((p: any) => ({ ...p, [k]: v }));
 
   const save = async (publish?: boolean) => {
-    if (!f.titulo) return toast.error("Informe o título");
+    if (!stripHtml(f.titulo)) return toast.error("Informe o título");
     setBusy(true);
     const slug = f.slug || slugify(f.titulo);
     const payload = {
