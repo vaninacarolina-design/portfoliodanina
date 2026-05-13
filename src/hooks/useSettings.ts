@@ -18,6 +18,7 @@ export type SiteSettings = {
   marquee_palavras: string[] | null;
   sobre_blocos: any[] | null;
   sobre_hero: any | null;
+  page_headers: Record<string, { eyebrow?: string; titulo?: string; subtitulo?: string }> | null;
 };
 
 export const useSettings = () => useQuery({
