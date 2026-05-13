@@ -5,21 +5,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { RichText } from "@/components/site/RichText";
+import { useSettings } from "@/hooks/useSettings";
 
 const Projetos = () => {
   const { data: projetos = [], isLoading } = useQuery({
     queryKey: ["projetos_all"],
     queryFn: async () => (await supabase.from("projetos").select("*").eq("publicado", true).order("ordem")).data ?? [],
   });
+  const { data: settings } = useSettings();
+  const h = settings?.page_headers?.["projetos"] || {};
 
   return (
     <>
       <Helmet><title>Projetos · Vanina Carolina</title></Helmet>
       <section className="container-editorial pt-24 pb-12">
         <Reveal>
-          <div className="text-eyebrow mb-6">— Portfólio</div>
-          <h1 className="text-display-xl">Projetos</h1>
-          <p className="mt-8 max-w-2xl text-lg text-foreground/70">Uma seleção de trabalhos, colaborações e iniciativas.</p>
+          <RichText html={h.eyebrow || "— Portfólio"} className="text-eyebrow mb-6 block" />
+          <RichText as="h1" html={h.titulo || "Projetos"} className="text-display-xl block" />
+          <RichText html={h.subtitulo || "Uma seleção de trabalhos, colaborações e iniciativas."} className="mt-8 max-w-2xl text-lg text-foreground/70 leading-relaxed block" />
         </Reveal>
       </section>
 
