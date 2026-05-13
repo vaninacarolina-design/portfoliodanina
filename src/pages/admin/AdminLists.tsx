@@ -34,6 +34,7 @@ export const AdminVoluntariados = () => (
     { key: "destaque", label: "Frase de destaque (pull-quote)", type: "richtext-mini" },
     { key: "descricao", label: "Resumo curto", type: "textarea" },
     { key: "conteudo", label: "Conteúdo completo (texto editorial)", type: "richtext" },
+    { key: "link_url", label: "Link externo (opcional)", type: "url" },
     { key: "galeria", label: "Galeria de fotos", type: "gallery" },
   ]} />
 );
