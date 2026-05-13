@@ -44,20 +44,20 @@ const Projetos = () => {
             return (
               <Reveal key={p.id} delay={(i % 3) * 0.08} className={cls}>
                 <Link to={`/projetos/${p.slug}`} className="group block">
-                  <div className="aspect-[4/5] overflow-hidden bg-secondary mb-5 relative">
+                  <div className="aspect-[4/5] overflow-hidden bg-secondary mb-8 relative">
                     {p.cover_url ? (
                       <img src={p.cover_url} alt="" loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-[900ms] group-hover:scale-105" />
                     ) : <div className="w-full h-full" />}
                     <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors" />
                   </div>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      {p.categoria && <RichText html={p.categoria} className="text-eyebrow mb-1.5 block" />}
-                      <RichText as="h2" html={p.titulo} className="font-display text-2xl md:text-3xl leading-tight" />
-                      {p.subtitulo && <RichText html={p.subtitulo} className="text-sm text-foreground/70 mt-1 block" />}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 space-y-3">
+                      {p.categoria && <RichText html={p.categoria} className="text-eyebrow block" />}
+                      <RichText as="h2" html={p.titulo} className="font-display text-2xl md:text-[2rem] leading-[1.15] tracking-tight" />
+                      {p.subtitulo && <RichText html={p.subtitulo} className="text-base text-foreground/65 leading-relaxed max-w-md block" />}
                     </div>
-                    <ArrowUpRight className="mt-1 shrink-0 transition-transform group-hover:rotate-45" size={20} />
+                    <ArrowUpRight className="mt-2 shrink-0 transition-transform group-hover:rotate-45" size={22} />
                   </div>
                 </Link>
               </Reveal>
