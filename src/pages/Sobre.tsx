@@ -3,6 +3,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { Reveal } from "@/components/site/Reveal";
 import { RichText } from "@/components/site/RichText";
 import { EditorialImg, EditorialGrid } from "@/components/site/EditorialImage";
+import { SocialIcons } from "@/components/site/SocialIcons";
 
 type Bloco =
   | { id?: string; tipo: "texto"; html: string; align?: "left" | "center" }
@@ -10,7 +11,8 @@ type Bloco =
   | { id?: string; tipo: "imagem"; img: any; legenda?: string }
   | { id?: string; tipo: "par"; lado: "esquerda" | "direita"; img: any; html: string }
   | { id?: string; tipo: "galeria"; itens: any[] }
-  | { id?: string; tipo: "espaco"; altura?: "s" | "m" | "l" };
+  | { id?: string; tipo: "espaco"; altura?: "s" | "m" | "l" }
+  | { id?: string; tipo: "redes"; itens: { plataforma: string; url: string }[]; align?: "left" | "center" | "right" };
 
 const SPACERS = { s: "h-12", m: "h-24", l: "h-40" };
 
@@ -18,6 +20,7 @@ const Sobre = () => {
   const { data: s, isLoading } = useSettings();
   const blocos: Bloco[] = Array.isArray(s?.sobre_blocos) ? (s!.sobre_blocos as any) : [];
   const hero = s?.sobre_hero;
+  const h = s?.page_headers?.["sobre"] || {};
 
   return (
     <>
@@ -29,10 +32,9 @@ const Sobre = () => {
       {/* Hero */}
       <section className="container-editorial pt-24 pb-16">
         <Reveal>
-          <div className="text-eyebrow mb-6">— Sobre mim</div>
-          <h1 className="text-display-xl">
-            Olá, eu sou<br /><em className="italic font-light"><RichText html={s?.hero_name || "Vanina"} /></em>
-          </h1>
+          <RichText html={h.eyebrow || "— Sobre mim"} className="text-eyebrow mb-6 block" />
+          <RichText as="h1" html={h.titulo || `Olá, eu sou<br/><em class='italic font-light'>${s?.hero_name || "Vanina"}</em>`} className="text-display-xl block" />
+          {h.subtitulo && <RichText html={h.subtitulo} className="mt-8 max-w-2xl text-lg text-foreground/70 leading-relaxed block" />}
         </Reveal>
         {hero?.url && (
           <Reveal delay={0.2} className="mt-16">
@@ -83,6 +85,7 @@ const Sobre = () => {
               )}
               {b.tipo === "galeria" && <EditorialGrid items={b.itens || []} />}
               {b.tipo === "espaco" && <div className={SPACERS[b.altura || "m"]} />}
+              {b.tipo === "redes" && <SocialIcons itens={b.itens || []} align={b.align || "center"} />}
             </Reveal>
           ))}
         </div>
