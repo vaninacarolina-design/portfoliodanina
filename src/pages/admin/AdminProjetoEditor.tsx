@@ -11,6 +11,7 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { RichEditor } from "@/components/admin/RichEditor";
 import { RichEditorMini } from "@/components/admin/RichEditorMini";
 import { EditorialImageGallery } from "@/components/admin/EditorialImage";
+import { LinksManager } from "@/components/admin/LinksManager";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 
@@ -25,7 +26,7 @@ const AdminProjetoEditor = () => {
   const qc = useQueryClient();
   const [f, setF] = useState<any>({
     titulo: "", slug: "", subtitulo: "", categoria: "", descricao_curta: "", conteudo: "",
-    cover_url: null, video_url: "", galeria: [], cliente: "", papel: "", periodo: "",
+    cover_url: null, video_url: "", galeria: [], links: [], cliente: "", papel: "", periodo: "",
     publicado: false, ordem: 0,
   });
   const [busy, setBusy] = useState(false);
@@ -35,7 +36,7 @@ const AdminProjetoEditor = () => {
     enabled: !isNew,
     queryFn: async () => {
       const { data } = await supabase.from("projetos").select("*").eq("id", id!).maybeSingle();
-      if (data) setF({ ...data, galeria: Array.isArray(data.galeria) ? data.galeria : [] });
+      if (data) setF({ ...data, galeria: Array.isArray(data.galeria) ? data.galeria : [], links: Array.isArray((data as any).links) ? (data as any).links : [] });
       return data;
     },
   });
@@ -49,9 +50,9 @@ const AdminProjetoEditor = () => {
     const payload = {
       titulo: f.titulo, slug, subtitulo: f.subtitulo, categoria: f.categoria,
       descricao_curta: f.descricao_curta, conteudo: f.conteudo, cover_url: f.cover_url,
-      video_url: f.video_url || null, galeria: f.galeria, cliente: f.cliente, papel: f.papel,
+      video_url: f.video_url || null, galeria: f.galeria, links: f.links || [], cliente: f.cliente, papel: f.papel,
       periodo: f.periodo, publicado: publish ?? f.publicado, ordem: f.ordem ?? 0,
-    };
+    } as any;
     if (isNew) {
       const { data, error } = await supabase.from("projetos").insert(payload).select().single();
       setBusy(false);
@@ -113,6 +114,12 @@ const AdminProjetoEditor = () => {
       <div>
         <Label>Conteúdo do projeto</Label>
         <div className="mt-2"><RichEditor value={f.conteudo ?? ""} onChange={v => set("conteudo", v)} placeholder="Conte a história do projeto…" /></div>
+      </div>
+
+      <div>
+        <Label>Botões de link (Ver vídeo, Ver fotos, Projeto completo, Making of…)</Label>
+        <p className="text-xs text-muted-foreground mt-1 mb-2">Crie quantos botões quiser. Aparecem no topo da página do projeto.</p>
+        <LinksManager value={f.links || []} onChange={v => set("links", v)} />
       </div>
 
       <div>
