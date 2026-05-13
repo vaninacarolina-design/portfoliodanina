@@ -25,13 +25,20 @@ const AdminConfig = () => {
       const palavras = Array.isArray((data as any).marquee_palavras)
         ? (data as any).marquee_palavras
         : ["Estratégia", "Criatividade", "Gestão", "Impacto", "Design"];
-      setForm({ ...data, marquee_palavras: palavras });
+      const headers = (data as any).page_headers && typeof (data as any).page_headers === "object"
+        ? (data as any).page_headers : {};
+      setForm({ ...data, marquee_palavras: palavras, page_headers: headers });
     }
   }, [data]);
 
   if (!form) return <div className="text-muted-foreground">Carregando…</div>;
 
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
+  const setHeader = (page: string, key: "eyebrow" | "titulo" | "subtitulo", v: string) =>
+    setForm((f: any) => ({
+      ...f,
+      page_headers: { ...(f.page_headers || {}), [page]: { ...((f.page_headers || {})[page] || {}), [key]: v } },
+    }));
 
   const save = async () => {
     setSaving(true);
@@ -39,6 +46,7 @@ const AdminConfig = () => {
       hero_name: form.hero_name, hero_subtitle: form.hero_subtitle, hero_intro: form.hero_intro,
       hero_image_url: form.hero_image_url, about_text: form.about_text,
       marquee_palavras: form.marquee_palavras ?? [],
+      page_headers: form.page_headers ?? {},
     } as any).eq("id", form.id);
     setSaving(false);
     if (error) return toast.error(error.message);
