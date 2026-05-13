@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Reveal } from "@/components/site/Reveal";
 import { RichText } from "@/components/site/RichText";
 import { EditorialGrid } from "@/components/site/EditorialImage";
+import { ProjectLinks } from "@/components/site/ProjectLinks";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 const ProjetoDetalhe = () => {
@@ -39,9 +40,12 @@ const ProjetoDetalhe = () => {
             <ArrowLeft size={16} /> Todos os projetos
           </Link>
           <Reveal>
-            {p.categoria && <RichText html={p.categoria} className="text-eyebrow mb-6 block" />}
-            <RichText as="h1" html={p.titulo} className="text-display-xl mb-6" />
-            {p.subtitulo && <RichText html={p.subtitulo} className="text-display-md font-light text-foreground/70 max-w-3xl block" />}
+            {p.categoria && <RichText html={p.categoria} className="text-eyebrow mb-8 block" />}
+            <RichText as="h1" html={p.titulo} className="text-display-xl leading-[1.05] mb-8" />
+            {p.subtitulo && <RichText html={p.subtitulo} className="text-display-md font-light text-foreground/70 max-w-3xl leading-snug block mt-2" />}
+            {Array.isArray((p as any).links) && (p as any).links.length > 0 && (
+              <div className="mt-10"><ProjectLinks links={(p as any).links} /></div>
+            )}
           </Reveal>
         </header>
 
