@@ -25,7 +25,7 @@ import { CSS } from "@dnd-kit/utilities";
 interface Field {
   key: string;
   label: string;
-  type?: "text" | "richtext-mini" | "textarea" | "richtext" | "date" | "files" | "image" | "gallery";
+  type?: "text" | "richtext-mini" | "textarea" | "richtext" | "date" | "files" | "image" | "gallery" | "url";
 }
 
 interface Props {
