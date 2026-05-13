@@ -91,6 +91,7 @@ export type Database = {
           descricao_curta: string | null
           galeria: Json
           id: string
+          links: Json
           ordem: number
           papel: string | null
           periodo: string | null
@@ -111,6 +112,7 @@ export type Database = {
           descricao_curta?: string | null
           galeria?: Json
           id?: string
+          links?: Json
           ordem?: number
           papel?: string | null
           periodo?: string | null
@@ -131,6 +133,7 @@ export type Database = {
           descricao_curta?: string | null
           galeria?: Json
           id?: string
+          links?: Json
           ordem?: number
           papel?: string | null
           periodo?: string | null
