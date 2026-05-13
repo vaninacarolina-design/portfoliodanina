@@ -29,18 +29,20 @@ export const Navbar = () => {
   return (
     <header className={cn(
       "fixed top-0 inset-x-0 z-50 transition-all duration-500",
-      scrolled ? "bg-background/85 backdrop-blur-md border-b border-border/60" : "bg-transparent"
+      scrolled
+        ? "bg-background/85 backdrop-blur-md border-b border-border/60 text-foreground"
+        : "bg-transparent text-white mix-blend-difference"
     )}>
       <div className="container-editorial flex items-center justify-between h-16 md:h-20">
         <Link to="/" className="font-display text-xl md:text-2xl tracking-tight">
-          Vanina<span className="text-accent">.</span>
+          Vanina<span className={scrolled ? "text-accent" : ""}>.</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-10">
           {links.map(l => (
             <NavLink key={l.to} to={l.to} end={l.to === "/"}
               className={({ isActive }) => cn(
-                "text-sm tracking-wide hover-underline pb-1",
+                "text-sm tracking-wide hover-underline pb-1 transition-colors hover:text-accent",
                 isActive && "text-accent"
               )}>
               {l.label}

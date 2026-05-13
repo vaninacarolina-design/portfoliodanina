@@ -2,11 +2,13 @@ import { Helmet } from "react-helmet-async";
 import { useEffect } from "react";
 import { useSettings } from "@/hooks/useSettings";
 import { Reveal } from "@/components/site/Reveal";
+import { RichText } from "@/components/site/RichText";
 import { ArrowUpRight } from "lucide-react";
 
 const Contato = () => {
   const { data: s } = useSettings();
   const wppLink = `https://wa.me/${(s?.whatsapp_number || "5541999288087").replace(/\D/g, "")}?text=${encodeURIComponent("Olá Vanina, vim pelo seu site.")}`;
+  const h = s?.page_headers?.["contato"] || {};
 
   // Aplica fundo escuro ao <html> enquanto a página estiver montada (evita "flash" branco em volta)
   useEffect(() => {
@@ -20,14 +22,12 @@ const Contato = () => {
       <div className="bg-foreground text-background -mt-16 md:-mt-20 pt-16 md:pt-20 min-h-screen">
         <section className="container-editorial py-24 md:py-32 min-h-[90vh] flex flex-col justify-center">
           <Reveal>
-            <div className="text-eyebrow !text-background/50 mb-6">— Contato</div>
-            <h1 className="text-display-xl">
-              Vamos<br /><em className="italic font-light text-accent">conversar</em>.
-            </h1>
+            <RichText html={h.eyebrow || "— Contato"} className="text-eyebrow !text-background/50 mb-6 block" />
+            <RichText as="h1" html={h.titulo || "Vamos<br/><em class='italic font-light text-accent'>conversar</em>."} className="text-display-xl block" />
           </Reveal>
 
           <Reveal delay={0.15}>
-            <p className="mt-10 max-w-2xl text-lg text-background/75 leading-relaxed">{s?.contact_intro}</p>
+            <RichText html={h.subtitulo || s?.contact_intro} className="mt-10 max-w-2xl text-lg text-background/75 leading-relaxed block" />
           </Reveal>
 
           <Reveal delay={0.25}>

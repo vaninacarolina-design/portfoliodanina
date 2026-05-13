@@ -25,13 +25,20 @@ const AdminConfig = () => {
       const palavras = Array.isArray((data as any).marquee_palavras)
         ? (data as any).marquee_palavras
         : ["Estratégia", "Criatividade", "Gestão", "Impacto", "Design"];
-      setForm({ ...data, marquee_palavras: palavras });
+      const headers = (data as any).page_headers && typeof (data as any).page_headers === "object"
+        ? (data as any).page_headers : {};
+      setForm({ ...data, marquee_palavras: palavras, page_headers: headers });
     }
   }, [data]);
 
   if (!form) return <div className="text-muted-foreground">Carregando…</div>;
 
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
+  const setHeader = (page: string, key: "eyebrow" | "titulo" | "subtitulo", v: string) =>
+    setForm((f: any) => ({
+      ...f,
+      page_headers: { ...(f.page_headers || {}), [page]: { ...((f.page_headers || {})[page] || {}), [key]: v } },
+    }));
 
   const save = async () => {
     setSaving(true);
@@ -39,6 +46,7 @@ const AdminConfig = () => {
       hero_name: form.hero_name, hero_subtitle: form.hero_subtitle, hero_intro: form.hero_intro,
       hero_image_url: form.hero_image_url, about_text: form.about_text,
       marquee_palavras: form.marquee_palavras ?? [],
+      page_headers: form.page_headers ?? {},
     } as any).eq("id", form.id);
     setSaving(false);
     if (error) return toast.error(error.message);
@@ -105,6 +113,40 @@ const AdminConfig = () => {
             <Plus size={14} /> Adicionar palavra
           </Button>
         </div>
+      </div>
+
+      <div className="border-t border-border pt-8 space-y-6">
+        <div>
+          <Label className="text-base">Cabeçalhos das páginas</Label>
+          <p className="text-sm text-muted-foreground mt-1">
+            Edite a tag pequena (eyebrow), o título grande e o subtítulo de cada página interna. Aceita formatação rica.
+          </p>
+        </div>
+        {[
+          { key: "projetos", label: "Projetos" },
+          { key: "atuacao-social", label: "Atuação Social" },
+          { key: "sobre", label: "Sobre Mim" },
+          { key: "contato", label: "Contato" },
+        ].map(p => {
+          const h = (form.page_headers || {})[p.key] || {};
+          return (
+            <div key={p.key} className="border border-border p-5 space-y-3 bg-secondary/20">
+              <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">{p.label}</div>
+              <div>
+                <Label className="text-xs">Eyebrow (tag pequena)</Label>
+                <div className="mt-1.5"><RichEditorMini value={h.eyebrow ?? ""} onChange={v => setHeader(p.key, "eyebrow", v)} placeholder="— Portfólio" /></div>
+              </div>
+              <div>
+                <Label className="text-xs">Título</Label>
+                <div className="mt-1.5"><RichEditorMini value={h.titulo ?? ""} onChange={v => setHeader(p.key, "titulo", v)} placeholder="Título grande" /></div>
+              </div>
+              <div>
+                <Label className="text-xs">Subtítulo</Label>
+                <div className="mt-1.5"><RichEditorMini value={h.subtitulo ?? ""} onChange={v => setHeader(p.key, "subtitulo", v)} placeholder="Texto introdutório" /></div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <Button onClick={save} disabled={saving} className="rounded-none">{saving ? "Salvando…" : "Salvar alterações"}</Button>

@@ -157,6 +157,7 @@ export type Database = {
           hero_subtitle: string
           id: string
           marquee_palavras: Json
+          page_headers: Json
           sobre_blocos: Json
           sobre_hero: Json | null
           social_behance: string | null
@@ -176,6 +177,7 @@ export type Database = {
           hero_subtitle?: string
           id?: string
           marquee_palavras?: Json
+          page_headers?: Json
           sobre_blocos?: Json
           sobre_hero?: Json | null
           social_behance?: string | null
@@ -195,6 +197,7 @@ export type Database = {
           hero_subtitle?: string
           id?: string
           marquee_palavras?: Json
+          page_headers?: Json
           sobre_blocos?: Json
           sobre_hero?: Json | null
           social_behance?: string | null
@@ -236,6 +239,7 @@ export type Database = {
           destaque: string | null
           galeria: Json
           id: string
+          link_url: string | null
           ordem: number
           organizacao: string
           periodo: string | null
@@ -250,6 +254,7 @@ export type Database = {
           destaque?: string | null
           galeria?: Json
           id?: string
+          link_url?: string | null
           ordem?: number
           organizacao: string
           periodo?: string | null
@@ -264,6 +269,7 @@ export type Database = {
           destaque?: string | null
           galeria?: Json
           id?: string
+          link_url?: string | null
           ordem?: number
           organizacao?: string
           periodo?: string | null

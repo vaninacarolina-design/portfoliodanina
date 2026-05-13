@@ -8,7 +8,7 @@ import { RichEditor } from "@/components/admin/RichEditor";
 import { RichEditorMini } from "@/components/admin/RichEditorMini";
 import { EditorialImageSingle, EditorialImageGallery } from "@/components/admin/EditorialImage";
 import { toast } from "sonner";
-import { Plus, Trash2, ChevronUp, ChevronDown, Type, Quote, Image as ImageIcon, Columns2, LayoutGrid, Minus } from "lucide-react";
+import { Plus, Trash2, ChevronUp, ChevronDown, Type, Quote, Image as ImageIcon, Columns2, LayoutGrid, Minus, AtSign, X } from "lucide-react";
 
 type Bloco = any;
 
@@ -18,8 +18,11 @@ const TYPES = [
   { v: "imagem", label: "Imagem", icon: ImageIcon },
   { v: "par", label: "Texto + Imagem", icon: Columns2 },
   { v: "galeria", label: "Galeria", icon: LayoutGrid },
+  { v: "redes", label: "Redes sociais", icon: AtSign },
   { v: "espaco", label: "Espaço", icon: Minus },
 ];
+
+const PLATAFORMAS = ["instagram", "linkedin", "behance", "youtube", "facebook", "tiktok", "spotify", "email", "site", "outro"];
 
 const newBlock = (tipo: string): Bloco => {
   const id = crypto.randomUUID();
@@ -29,6 +32,7 @@ const newBlock = (tipo: string): Bloco => {
     case "imagem": return { id, tipo, img: null, legenda: "" };
     case "par": return { id, tipo, lado: "esquerda", img: null, html: "" };
     case "galeria": return { id, tipo, itens: [] };
+    case "redes": return { id, tipo, itens: [], align: "center" };
     case "espaco": return { id, tipo, altura: "m" };
     default: return { id, tipo };
   }
@@ -150,6 +154,34 @@ const AdminSobre = () => {
                     {h === "s" ? "Pequeno" : h === "m" ? "Médio" : "Grande"}
                   </button>
                 ))}
+              </div>
+            )}
+            {b.tipo === "redes" && (
+              <div className="space-y-3">
+                <div className="flex gap-2 text-xs">
+                  {(["left", "center", "right"] as const).map(a => (
+                    <button key={a} type="button" onClick={() => update(i, { align: a })}
+                      className={`px-3 py-1.5 border ${(b.align || "center") === a ? "bg-foreground text-background border-foreground" : "border-input"}`}>
+                      {a === "left" ? "Esquerda" : a === "center" ? "Centro" : "Direita"}
+                    </button>
+                  ))}
+                </div>
+                {(b.itens || []).map((it: any, j: number) => (
+                  <div key={j} className="flex gap-2 items-center">
+                    <select value={it.plataforma || "instagram"}
+                      onChange={e => update(i, { itens: b.itens.map((x: any, k: number) => k === j ? { ...x, plataforma: e.target.value } : x) })}
+                      className="border border-input bg-background h-9 px-2 text-sm">
+                      {PLATAFORMAS.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                    <Input value={it.url || ""} placeholder="https://… (ou email)"
+                      onChange={e => update(i, { itens: b.itens.map((x: any, k: number) => k === j ? { ...x, url: e.target.value } : x) })} />
+                    <Button type="button" variant="ghost" size="sm"
+                      onClick={() => update(i, { itens: b.itens.filter((_: any, k: number) => k !== j) })}><X size={14} /></Button>
+                  </div>
+                ))}
+                <Button type="button" variant="outline" size="sm"
+                  onClick={() => update(i, { itens: [...(b.itens || []), { plataforma: "instagram", url: "" }] })}
+                  className="gap-2"><Plus size={14} /> Adicionar rede</Button>
               </div>
             )}
           </div>
