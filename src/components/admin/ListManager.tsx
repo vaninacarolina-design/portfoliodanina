@@ -147,6 +147,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
     if (f.type === "richtext-mini") return <RichEditorMini value={form[f.key] ?? ""} onChange={v => setForm({ ...form, [f.key]: v })} placeholder={f.label} />;
     if (f.type === "textarea") return <Textarea rows={3} value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
     if (f.type === "date") return <Input type="date" value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} />;
+    if (f.type === "url") return <Input type="url" value={form[f.key] ?? ""} onChange={e => setForm({ ...form, [f.key]: e.target.value })} placeholder="https://…" />;
     if (f.type === "image") return <ImageUpload value={form[f.key]} onChange={v => setForm({ ...form, [f.key]: v })} folder="lista" />;
     if (f.type === "gallery") {
       return <EditorialImageGallery value={form[f.key] || []} onChange={v => setForm({ ...form, [f.key]: v })} folder="galeria" />;
