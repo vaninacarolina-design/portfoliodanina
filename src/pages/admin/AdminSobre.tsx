@@ -8,7 +8,7 @@ import { RichEditor } from "@/components/admin/RichEditor";
 import { RichEditorMini } from "@/components/admin/RichEditorMini";
 import { EditorialImageSingle, EditorialImageGallery } from "@/components/admin/EditorialImage";
 import { toast } from "sonner";
-import { Plus, Trash2, ChevronUp, ChevronDown, Type, Quote, Image as ImageIcon, Columns2, LayoutGrid, Minus } from "lucide-react";
+import { Plus, Trash2, ChevronUp, ChevronDown, Type, Quote, Image as ImageIcon, Columns2, LayoutGrid, Minus, AtSign, X } from "lucide-react";
 
 type Bloco = any;
 
@@ -18,8 +18,11 @@ const TYPES = [
   { v: "imagem", label: "Imagem", icon: ImageIcon },
   { v: "par", label: "Texto + Imagem", icon: Columns2 },
   { v: "galeria", label: "Galeria", icon: LayoutGrid },
+  { v: "redes", label: "Redes sociais", icon: AtSign },
   { v: "espaco", label: "Espaço", icon: Minus },
 ];
+
+const PLATAFORMAS = ["instagram", "linkedin", "behance", "youtube", "facebook", "tiktok", "spotify", "email", "site", "outro"];
 
 const newBlock = (tipo: string): Bloco => {
   const id = crypto.randomUUID();
@@ -29,6 +32,7 @@ const newBlock = (tipo: string): Bloco => {
     case "imagem": return { id, tipo, img: null, legenda: "" };
     case "par": return { id, tipo, lado: "esquerda", img: null, html: "" };
     case "galeria": return { id, tipo, itens: [] };
+    case "redes": return { id, tipo, itens: [], align: "center" };
     case "espaco": return { id, tipo, altura: "m" };
     default: return { id, tipo };
   }
