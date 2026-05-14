@@ -4,7 +4,6 @@ export const AdminFormacoes = () => (
   <ListManager
     table="formacoes"
     title="Formações"
-    autoSortByDate="data_conclusao"
     fields={[
       { key: "titulo", label: "Título / Curso", type: "richtext-mini" },
       { key: "instituicao", label: "Instituição", type: "richtext-mini" },
