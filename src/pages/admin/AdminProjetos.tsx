@@ -19,21 +19,34 @@ const AdminProjetos = () => {
   const qc = useQueryClient();
   const { data: projetos = [] } = useQuery({
     queryKey: ["projetos_admin"],
-    queryFn: async () => (await supabase.from("projetos").select("*").order("ordem")).data ?? [],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("projetos")
+        .select("*")
+        .order("ordem", { ascending: true })
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
   });
 
   const [order, setOrder] = useState<any[]>([]);
   useEffect(() => { setOrder(projetos); }, [projetos]);
 
   const togglePub = async (p: any) => {
-    await supabase.from("projetos").update({ publicado: !p.publicado }).eq("id", p.id);
+    const { error } = await supabase.from("projetos").update({ publicado: !p.publicado }).eq("id", p.id);
+    if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["projetos_admin"] });
+    qc.invalidateQueries({ queryKey: ["projetos_all"] });
+    qc.invalidateQueries({ queryKey: ["projetos_home"] });
   };
   const remove = async (id: string) => {
     if (!confirm("Excluir projeto?")) return;
     const { error } = await supabase.from("projetos").delete().eq("id", id);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["projetos_admin"] });
+    qc.invalidateQueries({ queryKey: ["projetos_all"] });
+    qc.invalidateQueries({ queryKey: ["projetos_home"] });
   };
 
   const sensors = useSensors(
@@ -46,12 +59,21 @@ const AdminProjetos = () => {
     if (!over || active.id === over.id) return;
     const oldIdx = order.findIndex((x) => x.id === active.id);
     const newIdx = order.findIndex((x) => x.id === over.id);
+    if (oldIdx < 0 || newIdx < 0) return;
     const reordered = arrayMove(order, oldIdx, newIdx);
     setOrder(reordered);
-    await Promise.all(reordered.map((it: any, idx: number) =>
+    const updates = await Promise.all(reordered.map((it: any, idx: number) =>
       supabase.from("projetos").update({ ordem: idx }).eq("id", it.id)
     ));
+    const failed = updates.find(({ error }) => error)?.error;
+    if (failed) {
+      toast.error(failed.message);
+      qc.invalidateQueries({ queryKey: ["projetos_admin"] });
+      return;
+    }
     qc.invalidateQueries({ queryKey: ["projetos_admin"] });
+    qc.invalidateQueries({ queryKey: ["projetos_all"] });
+    qc.invalidateQueries({ queryKey: ["projetos_home"] });
     toast.success("Ordem atualizada");
   };
 
