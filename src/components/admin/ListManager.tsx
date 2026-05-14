@@ -45,7 +45,13 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
         const { data } = await supabase.from(table).select("*").order(autoSortByDate, { ascending: false, nullsFirst: false });
         return data ?? [];
       }
-      return (await supabase.from(table).select("*").order("ordem")).data ?? [];
+      const { data, error } = await supabase
+        .from(table)
+        .select("*")
+        .order("ordem", { ascending: true })
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
     },
   });
 
@@ -108,12 +114,18 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
     if (!over || active.id === over.id) return;
     const oldIdx = localOrder.findIndex((x: any) => x.id === active.id);
     const newIdx = localOrder.findIndex((x: any) => x.id === over.id);
+    if (oldIdx < 0 || newIdx < 0) return;
     const reordered = arrayMove(localOrder, oldIdx, newIdx);
     setLocalOrder(reordered);
-    // Persist new ordem values
-    await Promise.all(reordered.map((it: any, idx: number) =>
+    const updates = await Promise.all(reordered.map((it: any, idx: number) =>
       supabase.from(table).update({ ordem: idx }).eq("id", it.id)
     ));
+    const failed = updates.find(({ error }) => error)?.error;
+    if (failed) {
+      toast.error(failed.message);
+      qc.invalidateQueries({ queryKey: [table] });
+      return;
+    }
     qc.invalidateQueries({ queryKey: [table] });
     toast.success("Ordem atualizada");
   };
