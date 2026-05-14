@@ -32,35 +32,61 @@ const Projetos = () => {
           <div className="py-24 text-center text-muted-foreground italic">Em breve novos projetos.</div>
         )}
 
-        {/* Grid editorial 12-col com offset alternado para respiro */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-24">
+        {/* Grid editorial bento — tamanhos alternados, cantos arredondados, título sobre a imagem */}
+        <div className="grid grid-cols-2 md:grid-cols-6 auto-rows-[140px] md:auto-rows-[180px] gap-3 md:gap-5">
           {projetos.map((p: any, i) => {
-            // padrão editorial: alterna 5/5/2 — esquerda larga, direita média deslocada
-            const positions = [
-              "md:col-span-7",
-              "md:col-span-5 md:mt-32",
-              "md:col-span-5 md:col-start-2",
-              "md:col-span-6 md:col-start-7 md:mt-20",
-              "md:col-span-8 md:col-start-3",
+            // padrão bento de 6 colunas: tamanhos alternados para ritmo visual
+            const layouts = [
+              "col-span-2 md:col-span-4 row-span-2",        // grande paisagem
+              "col-span-2 md:col-span-2 row-span-2",        // pequeno quadrado
+              "col-span-2 md:col-span-2 row-span-3",        // alto retrato
+              "col-span-2 md:col-span-4 row-span-3",        // grande retrato
+              "col-span-2 md:col-span-3 row-span-2",        // médio
+              "col-span-2 md:col-span-3 row-span-2",        // médio
             ];
-            const cls = positions[i % positions.length];
+            const cls = layouts[i % layouts.length];
             return (
-              <Reveal key={p.id} delay={(i % 3) * 0.08} className={cls}>
-                <Link to={`/projetos/${p.slug}`} className="group block">
-                  <div className="aspect-[4/5] overflow-hidden bg-secondary mb-8 relative">
-                    {p.cover_url ? (
-                      <img src={p.cover_url} alt="" loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-[900ms] group-hover:scale-105" />
-                    ) : <div className="w-full h-full" />}
-                    <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors" />
+              <Reveal key={p.id} delay={(i % 3) * 0.06} className={cls}>
+                <Link
+                  to={`/projetos/${p.slug}`}
+                  className="group relative block w-full h-full overflow-hidden rounded-2xl bg-secondary"
+                >
+                  {p.cover_url ? (
+                    <img
+                      src={p.cover_url}
+                      alt=""
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-[900ms] group-hover:scale-[1.04]"
+                    />
+                  ) : <div className="absolute inset-0" />}
+
+                  {/* gradiente para legibilidade do título */}
+                  <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-foreground/70 via-foreground/20 to-transparent opacity-90" />
+
+                  {/* metadados sobre a imagem */}
+                  <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-end text-background">
+                    {p.categoria && (
+                      <RichText
+                        html={p.categoria}
+                        className="text-[10px] uppercase tracking-[0.2em] opacity-80 mb-2 block"
+                      />
+                    )}
+                    <RichText
+                      as="h2"
+                      html={p.titulo}
+                      className="font-display text-lg md:text-2xl leading-[1.15] tracking-tight"
+                    />
+                    {p.subtitulo && (
+                      <RichText
+                        html={p.subtitulo}
+                        className="mt-1 text-xs md:text-sm opacity-85 leading-snug line-clamp-2 block"
+                      />
+                    )}
                   </div>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0 space-y-3">
-                      {p.categoria && <RichText html={p.categoria} className="text-eyebrow block" />}
-                      <RichText as="h2" html={p.titulo} className="font-display text-2xl md:text-[2rem] leading-[1.15] tracking-tight" />
-                      {p.subtitulo && <RichText html={p.subtitulo} className="text-base text-foreground/65 leading-relaxed max-w-md block" />}
-                    </div>
-                    <ArrowUpRight className="mt-2 shrink-0 transition-transform group-hover:rotate-45" size={22} />
+
+                  {/* seta no canto */}
+                  <div className="absolute top-4 right-4 bg-background/90 text-foreground rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ArrowUpRight size={16} />
                   </div>
                 </Link>
               </Reveal>
