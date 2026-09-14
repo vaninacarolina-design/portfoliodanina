@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2, Edit3, Eye, EyeOff, GripVertical } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -105,7 +106,7 @@ const AdminProjetos = () => {
         <SortableContext items={order.map((i: any) => i.id)} strategy={verticalListSortingStrategy}>
           <div className="border-y border-border divide-y">
             {order.map((p: any) => (
-              <SortableProjectRow key={p.id} p={p} togglePub={togglePub} remove={remove} />
+              <SortableProjectRow key={p.id} p={p} togglePub={togglePub} togglePronto={togglePronto} remove={remove} />
             ))}
           </div>
         </SortableContext>
@@ -114,7 +115,7 @@ const AdminProjetos = () => {
   );
 };
 
-const SortableProjectRow = ({ p, togglePub, remove }: any) => {
+const SortableProjectRow = ({ p, togglePub, togglePronto, remove }: any) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: p.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
@@ -129,8 +130,12 @@ const SortableProjectRow = ({ p, togglePub, remove }: any) => {
         <div className="font-medium truncate">{(p.titulo || "").replace(/<[^>]+>/g, "") || "—"}</div>
         <div className="text-sm text-muted-foreground truncate">{(p.categoria || "").replace(/<[^>]+>/g, "") || "—"} · /{p.slug}</div>
       </div>
-      <div className={`text-xs px-2 py-1 ${p.publicado ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>
-        {p.publicado ? "Publicado" : "Rascunho"}
+      <label className="flex items-center gap-2 text-xs cursor-pointer shrink-0" title="Conteúdo pronto para publicar">
+        <Checkbox checked={!!p.conteudo_pronto} onCheckedChange={() => togglePronto(p)} />
+        <span className="hidden md:inline">Conteúdo pronto</span>
+      </label>
+      <div className={`text-xs px-2 py-1 ${p.publicado && p.conteudo_pronto ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>
+        {p.publicado && p.conteudo_pronto ? "No site" : p.publicado ? "Aguardando conteúdo" : "Rascunho"}
       </div>
       <Button variant="ghost" size="icon" onClick={() => togglePub(p)} title="Publicar/Despublicar">
         {p.publicado ? <EyeOff size={16} /> : <Eye size={16} />}
