@@ -80,7 +80,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
   };
 
   const save = async () => {
-    const payload: any = { ordem: form.ordem ?? 0 };
+    const payload: any = { ordem: form.ordem ?? 0, conteudo_pronto: !!form.conteudo_pronto };
     fields.forEach(f => {
       let v = form[f.key];
       if (f.type === "date" && v === "") v = null;
