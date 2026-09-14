@@ -54,7 +54,7 @@ const AdminProjetoEditor = () => {
       titulo: f.titulo, slug, subtitulo: f.subtitulo, categoria: f.categoria,
       descricao_curta: f.descricao_curta, conteudo: f.conteudo, cover_url: f.cover_url,
       video_url: f.video_url || null, galeria: f.galeria, links: f.links || [], cliente: f.cliente, papel: f.papel,
-      periodo: f.periodo, publicado: publish ?? f.publicado, ordem: f.ordem ?? 0,
+      periodo: f.periodo, publicado: publish ?? f.publicado, conteudo_pronto: !!f.conteudo_pronto, ordem: f.ordem ?? 0,
     } as any;
     if (isNew) {
       const { data, error } = await supabase.from("projetos").insert(payload).select().single();
