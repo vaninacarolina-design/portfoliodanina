@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { EditorialImageSingle, EditorialImageGallery } from "@/components/admin/EditorialImage";
 import { RichEditor } from "@/components/admin/RichEditor";
