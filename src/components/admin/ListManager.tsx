@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { EditorialImageSingle, EditorialImageGallery } from "@/components/admin/EditorialImage";
 import { RichEditor } from "@/components/admin/RichEditor";
@@ -62,7 +63,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
   useEffect(() => { setLocalOrder(items); }, [items]);
 
   const startNew = () => {
-    const blank: any = { ordem: items.length };
+    const blank: any = { ordem: items.length, conteudo_pronto: false };
     fields.forEach(f => {
       if (f.type === "files" || f.type === "gallery") blank[f.key] = [];
       else if (f.type === "image") blank[f.key] = null;
@@ -80,7 +81,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
   };
 
   const save = async () => {
-    const payload: any = { ordem: form.ordem ?? 0 };
+    const payload: any = { ordem: form.ordem ?? 0, conteudo_pronto: !!form.conteudo_pronto };
     fields.forEach(f => {
       let v = form[f.key];
       if (f.type === "date" && v === "") v = null;
@@ -209,6 +210,19 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
               <div className="mt-1.5">{renderField(f)}</div>
             </div>
           ))}
+          <label className="flex items-start gap-3 border border-border bg-background p-3 cursor-pointer">
+            <Checkbox
+              checked={!!form.conteudo_pronto}
+              onCheckedChange={(v) => setForm({ ...form, conteudo_pronto: v === true })}
+              className="mt-0.5"
+            />
+            <span className="text-sm">
+              <span className="font-medium">Conteúdo pronto para publicar</span>
+              <span className="block text-muted-foreground text-xs mt-0.5">
+                Enquanto estiver desmarcado, este item fica oculto no site.
+              </span>
+            </span>
+          </label>
           <div className="flex gap-2">
             <Button onClick={save} className="rounded-none">Salvar</Button>
             <Button variant="outline" onClick={() => setEditing(null)} className="rounded-none">Cancelar</Button>
@@ -223,7 +237,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
           <SortableContext items={localOrder.map((i: any) => i.id)} strategy={verticalListSortingStrategy}>
             <div className="border-y border-border divide-y">
               {localOrder.map((it: any) => (
-                <SortableRow key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} />
+                <SortableRow key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} onToggleReady={toggleReady} />
               ))}
             </div>
           </SortableContext>
@@ -231,7 +245,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
       ) : (
         <div className="border-y border-border divide-y">
           {localOrder.map((it: any) => (
-            <Row key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} draggable={false} />
+            <Row key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} onToggleReady={toggleReady} draggable={false} />
           ))}
         </div>
       )}
@@ -239,19 +253,19 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
   );
 };
 
-const SortableRow = ({ item, fields, onEdit, onRemove }: any) => {
+const SortableRow = ({ item, fields, onEdit, onRemove, onToggleReady }: any) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
     <div ref={setNodeRef} style={style}>
-      <Row item={item} fields={fields} onEdit={onEdit} onRemove={onRemove} dragHandle={{ ...attributes, ...listeners }} draggable />
+      <Row item={item} fields={fields} onEdit={onEdit} onRemove={onRemove} onToggleReady={onToggleReady} dragHandle={{ ...attributes, ...listeners }} draggable />
     </div>
   );
 };
 
 const stripHtml = (v: any) => typeof v === "string" ? v.replace(/<[^>]+>/g, "").trim() : (v ?? "");
 
-const Row = ({ item, fields, onEdit, onRemove, dragHandle, draggable }: any) => (
+const Row = ({ item, fields, onEdit, onRemove, onToggleReady, dragHandle, draggable }: any) => (
   <div className="py-4 flex items-center gap-3">
     {draggable && (
       <button {...dragHandle} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none p-1" title="Arrastar para reordenar">
@@ -262,6 +276,12 @@ const Row = ({ item, fields, onEdit, onRemove, dragHandle, draggable }: any) => 
       <div className="font-medium truncate">{stripHtml(item[fields[0].key]) || "—"}</div>
       <div className="text-sm text-muted-foreground truncate">{stripHtml(item[fields[1]?.key])}</div>
     </div>
+    <label className="flex items-center gap-2 text-xs shrink-0 cursor-pointer" title="Conteúdo pronto para publicar">
+      <Checkbox checked={!!item.conteudo_pronto} onCheckedChange={(v) => onToggleReady(item, v === true)} />
+      <span className={item.conteudo_pronto ? "text-muted-foreground" : "text-destructive"}>
+        {item.conteudo_pronto ? "No site" : "Oculto"}
+      </span>
+    </label>
     <Button variant="ghost" size="icon" onClick={() => onRemove(item.id)}><Trash2 size={16} /></Button>
   </div>
 );

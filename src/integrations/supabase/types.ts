@@ -17,6 +17,7 @@ export type Database = {
       experiencias: {
         Row: {
           cargo: string
+          conteudo_pronto: boolean
           created_at: string
           descricao: string | null
           empresa: string
@@ -26,6 +27,7 @@ export type Database = {
         }
         Insert: {
           cargo: string
+          conteudo_pronto?: boolean
           created_at?: string
           descricao?: string | null
           empresa: string
@@ -35,6 +37,7 @@ export type Database = {
         }
         Update: {
           cargo?: string
+          conteudo_pronto?: boolean
           created_at?: string
           descricao?: string | null
           empresa?: string
@@ -47,6 +50,7 @@ export type Database = {
       formacoes: {
         Row: {
           anexos: Json
+          conteudo_pronto: boolean
           created_at: string
           data_conclusao: string | null
           descricao: string | null
@@ -58,6 +62,7 @@ export type Database = {
         }
         Insert: {
           anexos?: Json
+          conteudo_pronto?: boolean
           created_at?: string
           data_conclusao?: string | null
           descricao?: string | null
@@ -69,6 +74,7 @@ export type Database = {
         }
         Update: {
           anexos?: Json
+          conteudo_pronto?: boolean
           created_at?: string
           data_conclusao?: string | null
           descricao?: string | null
@@ -236,6 +242,7 @@ export type Database = {
       voluntariados: {
         Row: {
           conteudo: string | null
+          conteudo_pronto: boolean
           cover_url: string | null
           created_at: string
           descricao: string | null
@@ -251,6 +258,7 @@ export type Database = {
         }
         Insert: {
           conteudo?: string | null
+          conteudo_pronto?: boolean
           cover_url?: string | null
           created_at?: string
           descricao?: string | null
@@ -266,6 +274,7 @@ export type Database = {
         }
         Update: {
           conteudo?: string | null
+          conteudo_pronto?: boolean
           cover_url?: string | null
           created_at?: string
           descricao?: string | null
