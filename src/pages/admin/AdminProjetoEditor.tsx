@@ -46,6 +46,8 @@ const AdminProjetoEditor = () => {
 
   const save = async (publish?: boolean) => {
     if (!stripHtml(f.titulo)) return toast.error("Informe o título");
+    if (publish && !f.conteudo_pronto)
+      return toast.error("Marque “Conteúdo pronto para publicar” antes de publicar.");
     setBusy(true);
     const slug = f.slug || slugify(f.titulo);
     const payload = {
