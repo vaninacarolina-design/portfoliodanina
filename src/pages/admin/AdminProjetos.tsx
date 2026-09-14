@@ -33,12 +33,24 @@ const AdminProjetos = () => {
   const [order, setOrder] = useState<any[]>([]);
   useEffect(() => { setOrder(projetos); }, [projetos]);
 
-  const togglePub = async (p: any) => {
-    const { error } = await supabase.from("projetos").update({ publicado: !p.publicado }).eq("id", p.id);
-    if (error) return toast.error(error.message);
+  const refresh = () => {
     qc.invalidateQueries({ queryKey: ["projetos_admin"] });
     qc.invalidateQueries({ queryKey: ["projetos_all"] });
     qc.invalidateQueries({ queryKey: ["projetos_home"] });
+  };
+
+  const togglePub = async (p: any) => {
+    if (!p.publicado && !p.conteudo_pronto)
+      return toast.error("Marque “Conteúdo pronto para publicar” antes de exibir no site.");
+    const { error } = await supabase.from("projetos").update({ publicado: !p.publicado }).eq("id", p.id);
+    if (error) return toast.error(error.message);
+    refresh();
+  };
+
+  const togglePronto = async (p: any) => {
+    const { error } = await supabase.from("projetos").update({ conteudo_pronto: !p.conteudo_pronto }).eq("id", p.id);
+    if (error) return toast.error(error.message);
+    refresh();
   };
   const remove = async (id: string) => {
     if (!confirm("Excluir projeto?")) return;
