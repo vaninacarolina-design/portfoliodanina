@@ -28,7 +28,7 @@ const AdminProjetoEditor = () => {
   const [f, setF] = useState<any>({
     titulo: "", slug: "", subtitulo: "", categoria: "", descricao_curta: "", conteudo: "",
     cover_url: null, video_url: "", galeria: [], links: [], cliente: "", papel: "", periodo: "",
-    publicado: false, ordem: 0,
+    publicado: false, conteudo_pronto: false, ordem: 0,
   });
   const [busy, setBusy] = useState(false);
 
