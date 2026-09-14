@@ -237,7 +237,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
           <SortableContext items={localOrder.map((i: any) => i.id)} strategy={verticalListSortingStrategy}>
             <div className="border-y border-border divide-y">
               {localOrder.map((it: any) => (
-                <SortableRow key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} />
+                <SortableRow key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} onToggleReady={toggleReady} />
               ))}
             </div>
           </SortableContext>
@@ -245,7 +245,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
       ) : (
         <div className="border-y border-border divide-y">
           {localOrder.map((it: any) => (
-            <Row key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} draggable={false} />
+            <Row key={it.id} item={it} fields={fields} onEdit={startEdit} onRemove={remove} onToggleReady={toggleReady} draggable={false} />
           ))}
         </div>
       )}
@@ -253,19 +253,19 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
   );
 };
 
-const SortableRow = ({ item, fields, onEdit, onRemove }: any) => {
+const SortableRow = ({ item, fields, onEdit, onRemove, onToggleReady }: any) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
     <div ref={setNodeRef} style={style}>
-      <Row item={item} fields={fields} onEdit={onEdit} onRemove={onRemove} dragHandle={{ ...attributes, ...listeners }} draggable />
+      <Row item={item} fields={fields} onEdit={onEdit} onRemove={onRemove} onToggleReady={onToggleReady} dragHandle={{ ...attributes, ...listeners }} draggable />
     </div>
   );
 };
 
 const stripHtml = (v: any) => typeof v === "string" ? v.replace(/<[^>]+>/g, "").trim() : (v ?? "");
 
-const Row = ({ item, fields, onEdit, onRemove, dragHandle, draggable }: any) => (
+const Row = ({ item, fields, onEdit, onRemove, onToggleReady, dragHandle, draggable }: any) => (
   <div className="py-4 flex items-center gap-3">
     {draggable && (
       <button {...dragHandle} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none p-1" title="Arrastar para reordenar">
@@ -276,6 +276,12 @@ const Row = ({ item, fields, onEdit, onRemove, dragHandle, draggable }: any) => 
       <div className="font-medium truncate">{stripHtml(item[fields[0].key]) || "—"}</div>
       <div className="text-sm text-muted-foreground truncate">{stripHtml(item[fields[1]?.key])}</div>
     </div>
+    <label className="flex items-center gap-2 text-xs shrink-0 cursor-pointer" title="Conteúdo pronto para publicar">
+      <Checkbox checked={!!item.conteudo_pronto} onCheckedChange={(v) => onToggleReady(item, v === true)} />
+      <span className={item.conteudo_pronto ? "text-muted-foreground" : "text-destructive"}>
+        {item.conteudo_pronto ? "No site" : "Oculto"}
+      </span>
+    </label>
     <Button variant="ghost" size="icon" onClick={() => onRemove(item.id)}><Trash2 size={16} /></Button>
   </div>
 );
