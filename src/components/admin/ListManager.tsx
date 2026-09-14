@@ -62,7 +62,7 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
   useEffect(() => { setLocalOrder(items); }, [items]);
 
   const startNew = () => {
-    const blank: any = { ordem: items.length };
+    const blank: any = { ordem: items.length, conteudo_pronto: false };
     fields.forEach(f => {
       if (f.type === "files" || f.type === "gallery") blank[f.key] = [];
       else if (f.type === "image") blank[f.key] = null;
