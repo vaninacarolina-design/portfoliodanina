@@ -10,7 +10,7 @@ import { useSettings } from "@/hooks/useSettings";
 const Projetos = () => {
   const { data: projetos = [], isLoading } = useQuery({
     queryKey: ["projetos_all"],
-    queryFn: async () => (await supabase.from("projetos").select("*").eq("publicado", true).order("ordem")).data ?? [],
+    queryFn: async () => (await supabase.from("projetos").select("*").eq("publicado", true).eq("conteudo_pronto", true).order("ordem")).data ?? [],
   });
   const { data: settings } = useSettings();
   const h = settings?.page_headers?.["projetos"] || {};

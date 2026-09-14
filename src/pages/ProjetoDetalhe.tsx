@@ -13,7 +13,7 @@ const ProjetoDetalhe = () => {
   const { data: p, isLoading } = useQuery({
     queryKey: ["projeto", slug],
     queryFn: async () => {
-      const { data } = await supabase.from("projetos").select("*").eq("slug", slug!).eq("publicado", true).maybeSingle();
+      const { data } = await supabase.from("projetos").select("*").eq("slug", slug!).eq("publicado", true).eq("conteudo_pronto", true).maybeSingle();
       return data;
     },
   });
