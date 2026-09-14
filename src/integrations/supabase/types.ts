@@ -86,6 +86,7 @@ export type Database = {
           categoria: string | null
           cliente: string | null
           conteudo: string | null
+          conteudo_pronto: boolean
           cover_url: string | null
           created_at: string
           descricao_curta: string | null
@@ -107,6 +108,7 @@ export type Database = {
           categoria?: string | null
           cliente?: string | null
           conteudo?: string | null
+          conteudo_pronto?: boolean
           cover_url?: string | null
           created_at?: string
           descricao_curta?: string | null
@@ -128,6 +130,7 @@ export type Database = {
           categoria?: string | null
           cliente?: string | null
           conteudo?: string | null
+          conteudo_pronto?: boolean
           cover_url?: string | null
           created_at?: string
           descricao_curta?: string | null
