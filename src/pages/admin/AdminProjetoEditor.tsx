@@ -84,9 +84,15 @@ const AdminProjetoEditor = () => {
 
       <div className="flex items-end justify-between flex-wrap gap-4">
         <h1 className="font-display text-4xl">{isNew ? "Novo projeto" : "Editar projeto"}</h1>
-        <div className="flex gap-2 items-center">
-          <span className="text-sm text-muted-foreground">{f.publicado ? "Publicado" : "Rascunho"}</span>
-          <Switch checked={f.publicado} onCheckedChange={v => set("publicado", v)} />
+        <div className="flex gap-5 items-center flex-wrap">
+          <div className="flex gap-2 items-center">
+            <span className="text-sm text-muted-foreground">{f.publicado ? "Aparecer" : "Não aparecer"}</span>
+            <Switch checked={f.publicado} onCheckedChange={v => set("publicado", v)} />
+          </div>
+          <label className="flex gap-2 items-center text-sm cursor-pointer">
+            <Checkbox checked={!!f.conteudo_pronto} onCheckedChange={v => set("conteudo_pronto", !!v)} />
+            Conteúdo pronto para publicar
+          </label>
         </div>
       </div>
 
