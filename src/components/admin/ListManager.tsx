@@ -209,6 +209,19 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
               <div className="mt-1.5">{renderField(f)}</div>
             </div>
           ))}
+          <label className="flex items-start gap-3 border border-border bg-background p-3 cursor-pointer">
+            <Checkbox
+              checked={!!form.conteudo_pronto}
+              onCheckedChange={(v) => setForm({ ...form, conteudo_pronto: v === true })}
+              className="mt-0.5"
+            />
+            <span className="text-sm">
+              <span className="font-medium">Conteúdo pronto para publicar</span>
+              <span className="block text-muted-foreground text-xs mt-0.5">
+                Enquanto estiver desmarcado, este item fica oculto no site.
+              </span>
+            </span>
+          </label>
           <div className="flex gap-2">
             <Button onClick={save} className="rounded-none">Salvar</Button>
             <Button variant="outline" onClick={() => setEditing(null)} className="rounded-none">Cancelar</Button>
