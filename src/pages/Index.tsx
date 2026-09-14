@@ -38,7 +38,7 @@ const Index = () => {
   });
   const { data: projetos = [] } = useQuery({
     queryKey: ["projetos_home"],
-    queryFn: async () => (await supabase.from("projetos").select("*").eq("publicado", true).order("ordem").limit(3)).data ?? [],
+    queryFn: async () => (await supabase.from("projetos").select("*").eq("publicado", true).eq("conteudo_pronto", true).order("ordem").limit(3)).data ?? [],
   });
 
   const heroImage = s?.hero_image_url || null;

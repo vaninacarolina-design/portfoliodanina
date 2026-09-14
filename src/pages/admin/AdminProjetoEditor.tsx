@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { RichEditor } from "@/components/admin/RichEditor";
 import { RichEditorMini } from "@/components/admin/RichEditorMini";
@@ -27,7 +28,7 @@ const AdminProjetoEditor = () => {
   const [f, setF] = useState<any>({
     titulo: "", slug: "", subtitulo: "", categoria: "", descricao_curta: "", conteudo: "",
     cover_url: null, video_url: "", galeria: [], links: [], cliente: "", papel: "", periodo: "",
-    publicado: false, ordem: 0,
+    publicado: false, conteudo_pronto: false, ordem: 0,
   });
   const [busy, setBusy] = useState(false);
 
@@ -45,13 +46,15 @@ const AdminProjetoEditor = () => {
 
   const save = async (publish?: boolean) => {
     if (!stripHtml(f.titulo)) return toast.error("Informe o título");
+    if (publish && !f.conteudo_pronto)
+      return toast.error("Marque “Conteúdo pronto para publicar” antes de publicar.");
     setBusy(true);
     const slug = f.slug || slugify(f.titulo);
     const payload = {
       titulo: f.titulo, slug, subtitulo: f.subtitulo, categoria: f.categoria,
       descricao_curta: f.descricao_curta, conteudo: f.conteudo, cover_url: f.cover_url,
       video_url: f.video_url || null, galeria: f.galeria, links: f.links || [], cliente: f.cliente, papel: f.papel,
-      periodo: f.periodo, publicado: publish ?? f.publicado, ordem: f.ordem ?? 0,
+      periodo: f.periodo, publicado: publish ?? f.publicado, conteudo_pronto: !!f.conteudo_pronto, ordem: f.ordem ?? 0,
     } as any;
     if (isNew) {
       const { data, error } = await supabase.from("projetos").insert(payload).select().single();
@@ -84,9 +87,15 @@ const AdminProjetoEditor = () => {
 
       <div className="flex items-end justify-between flex-wrap gap-4">
         <h1 className="font-display text-4xl">{isNew ? "Novo projeto" : "Editar projeto"}</h1>
-        <div className="flex gap-2 items-center">
-          <span className="text-sm text-muted-foreground">{f.publicado ? "Publicado" : "Rascunho"}</span>
-          <Switch checked={f.publicado} onCheckedChange={v => set("publicado", v)} />
+        <div className="flex gap-5 items-center flex-wrap">
+          <div className="flex gap-2 items-center">
+            <span className="text-sm text-muted-foreground">{f.publicado ? "Aparecer" : "Não aparecer"}</span>
+            <Switch checked={f.publicado} onCheckedChange={v => set("publicado", v)} />
+          </div>
+          <label className="flex gap-2 items-center text-sm cursor-pointer">
+            <Checkbox checked={!!f.conteudo_pronto} onCheckedChange={v => set("conteudo_pronto", !!v)} />
+            Conteúdo pronto para publicar
+          </label>
         </div>
       </div>
 
