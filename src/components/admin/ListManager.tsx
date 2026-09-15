@@ -108,6 +108,14 @@ export const ListManager = ({ table, title, fields, autoSortByDate }: Props) => 
     qc.invalidateQueries({ queryKey: [table] });
   };
 
+  const toggleReady = async (item: any, value: boolean) => {
+    const { error } = await supabase.from(table).update({ conteudo_pronto: value }).eq("id", item.id);
+    if (error) return toast.error(error.message);
+    setLocalOrder((prev) => prev.map((x: any) => (x.id === item.id ? { ...x, conteudo_pronto: value } : x)));
+    qc.invalidateQueries({ queryKey: [table] });
+    toast.success(value ? "Agora aparece no site" : "Oculto no site");
+  };
+
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
   const onDragEnd = async (e: DragEndEvent) => {
