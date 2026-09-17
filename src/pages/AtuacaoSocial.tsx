@@ -11,7 +11,7 @@ const AtuacaoSocial = () => {
   const { data: voluntariados = [], isLoading } = useQuery({
     queryKey: ["voluntariados_page"],
     queryFn: async () =>
-      (await supabase.from("voluntariados").select("*").order("ordem")).data ?? [],
+      (await supabase.from("voluntariados").select("*").eq("conteudo_pronto", true).order("ordem")).data ?? [],
   });
   const { data: settings } = useSettings();
   const h = settings?.page_headers?.["atuacao-social"] || {};

@@ -12,6 +12,8 @@ import ProjetoDetalhe from "./pages/ProjetoDetalhe";
 import Contato from "./pages/Contato";
 import AtuacaoSocial from "./pages/AtuacaoSocial";
 import Sobre from "./pages/Sobre";
+import Skills from "./pages/Skills";
+import AdminSkills from "./pages/admin/AdminSkills";
 import Auth from "./pages/Auth";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -39,6 +41,7 @@ const App = () => (
                 <Route path="/projetos" element={<Projetos />} />
                 <Route path="/projetos/:slug" element={<ProjetoDetalhe />} />
                 <Route path="/sobre" element={<Sobre />} />
+                <Route path="/skills" element={<Skills />} />
                 <Route path="/atuacao-social" element={<AtuacaoSocial />} />
                 <Route path="/contato" element={<Contato />} />
               </Route>
@@ -53,6 +56,7 @@ const App = () => (
                 <Route path="formacoes" element={<AdminFormacoes />} />
                 <Route path="experiencias" element={<AdminExperiencias />} />
                 <Route path="voluntariados" element={<AdminVoluntariados />} />
+                <Route path="skills" element={<AdminSkills />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

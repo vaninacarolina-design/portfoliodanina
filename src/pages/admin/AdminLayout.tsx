@@ -9,6 +9,7 @@ const links = [
   { to: "/admin/projetos", label: "Projetos" },
   { to: "/admin/configuracoes", label: "Home & Hero" },
   { to: "/admin/sobre", label: "Sobre Mim" },
+  { to: "/admin/skills", label: "Skills" },
   { to: "/admin/formacoes", label: "Formações" },
   { to: "/admin/experiencias", label: "Experiências" },
   { to: "/admin/voluntariados", label: "Voluntariado" },
