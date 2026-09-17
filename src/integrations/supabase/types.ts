@@ -167,8 +167,10 @@ export type Database = {
           id: string
           marquee_palavras: Json
           page_headers: Json
+          skills_intro: string
           sobre_blocos: Json
           sobre_hero: Json | null
+          sobre_pronto: boolean
           social_behance: string | null
           social_instagram: string | null
           social_linkedin: string | null
@@ -187,8 +189,10 @@ export type Database = {
           id?: string
           marquee_palavras?: Json
           page_headers?: Json
+          skills_intro?: string
           sobre_blocos?: Json
           sobre_hero?: Json | null
+          sobre_pronto?: boolean
           social_behance?: string | null
           social_instagram?: string | null
           social_linkedin?: string | null
@@ -207,14 +211,55 @@ export type Database = {
           id?: string
           marquee_palavras?: Json
           page_headers?: Json
+          skills_intro?: string
           sobre_blocos?: Json
           sobre_hero?: Json | null
+          sobre_pronto?: boolean
           social_behance?: string | null
           social_instagram?: string | null
           social_linkedin?: string | null
           updated_at?: string
           whatsapp_display?: string
           whatsapp_number?: string
+        }
+        Relationships: []
+      }
+      skills: {
+        Row: {
+          categoria: string
+          conteudo_pronto: boolean
+          created_at: string
+          id: string
+          logo_url: string | null
+          nivel: string | null
+          nome: string
+          ordem: number
+          updated_at: string
+          visivel: boolean
+        }
+        Insert: {
+          categoria?: string
+          conteudo_pronto?: boolean
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          nivel?: string | null
+          nome: string
+          ordem?: number
+          updated_at?: string
+          visivel?: boolean
+        }
+        Update: {
+          categoria?: string
+          conteudo_pronto?: boolean
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          nivel?: string | null
+          nome?: string
+          ordem?: number
+          updated_at?: string
+          visivel?: boolean
         }
         Relationships: []
       }
