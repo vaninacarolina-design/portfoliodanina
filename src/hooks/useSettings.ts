@@ -19,6 +19,8 @@ export type SiteSettings = {
   sobre_blocos: any[] | null;
   sobre_hero: any | null;
   page_headers: Record<string, { eyebrow?: string; titulo?: string; subtitulo?: string }> | null;
+  sobre_pronto?: boolean | null;
+  skills_intro?: string | null;
 };
 
 export const useSettings = () => useQuery({

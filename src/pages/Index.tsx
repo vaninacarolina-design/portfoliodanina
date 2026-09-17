@@ -26,15 +26,15 @@ const Index = () => {
 
   const { data: formacoes = [] } = useQuery({
     queryKey: ["formacoes"],
-    queryFn: async () => (await supabase.from("formacoes").select("*").order("ordem", { ascending: true }).order("created_at", { ascending: true })).data ?? [],
+    queryFn: async () => (await supabase.from("formacoes").select("*").eq("conteudo_pronto", true).order("ordem", { ascending: true }).order("created_at", { ascending: true })).data ?? [],
   });
   const { data: experiencias = [] } = useQuery({
     queryKey: ["experiencias"],
-    queryFn: async () => (await supabase.from("experiencias").select("*").order("ordem")).data ?? [],
+    queryFn: async () => (await supabase.from("experiencias").select("*").eq("conteudo_pronto", true).order("ordem")).data ?? [],
   });
   const { data: voluntariados = [] } = useQuery({
     queryKey: ["voluntariados"],
-    queryFn: async () => (await supabase.from("voluntariados").select("*").order("ordem")).data ?? [],
+    queryFn: async () => (await supabase.from("voluntariados").select("*").eq("conteudo_pronto", true).order("ordem")).data ?? [],
   });
   const { data: projetos = [] } = useQuery({
     queryKey: ["projetos_home"],
