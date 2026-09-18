@@ -72,12 +72,14 @@ const AdminSobre = () => {
     const { error } = await supabase.from("site_settings").update({
       sobre_blocos: blocos as any,
       sobre_hero: hero as any,
+      sobre_pronto: pronto as any,
     } as any).eq("id", (data as any).id);
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Página Sobre atualizada");
     refetch();
     qc.invalidateQueries({ queryKey: ["site_settings"] });
+    qc.invalidateQueries({ queryKey: ["nav_sections"] });
   };
 
   return (
