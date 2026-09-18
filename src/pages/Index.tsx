@@ -140,11 +140,12 @@ const Index = () => {
           ))}
         </div>
       </Section>
+      )}
 
       {/* FORMAÇÃO */}
+      {formacoes.length > 0 && (
       <Section eyebrow="Formação" title="Educação e estudos">
         <div className="grid md:grid-cols-2 gap-x-12 gap-y-10">
-          {formacoes.length === 0 && <Empty label="Nenhuma formação cadastrada ainda." />}
           {formacoes.map((f: any, i) => (
             <Reveal key={f.id} delay={i * 0.05}>
               <div className="border-l-2 border-accent pl-5">
