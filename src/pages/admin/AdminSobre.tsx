@@ -46,12 +46,14 @@ const AdminSobre = () => {
   });
   const [blocos, setBlocos] = useState<Bloco[]>([]);
   const [hero, setHero] = useState<any>(null);
+  const [pronto, setPronto] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (data) {
       setBlocos(Array.isArray((data as any).sobre_blocos) ? (data as any).sobre_blocos : []);
       setHero((data as any).sobre_hero ?? null);
+      setPronto((data as any).sobre_pronto ?? true);
     }
   }, [data]);
 
