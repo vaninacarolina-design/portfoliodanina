@@ -208,7 +208,14 @@ const AdminSobre = () => {
         </div>
       </div>
 
-      <div className="sticky bottom-0 bg-background py-4 border-t border-border">
+      <div className="sticky bottom-0 bg-background py-4 border-t border-border space-y-3">
+        <label className="flex items-start gap-3 text-sm cursor-pointer">
+          <input type="checkbox" checked={pronto} onChange={e => setPronto(e.target.checked)} className="mt-1" />
+          <span>
+            <span className="font-medium">Conteúdo pronto para publicar</span>
+            <span className="block text-xs text-muted-foreground">Enquanto estiver desmarcado, a aba “Sobre Mim” fica escondida do site.</span>
+          </span>
+        </label>
         <Button onClick={save} disabled={saving} className="rounded-none gap-2">
           <Plus size={14} /> {saving ? "Salvando…" : "Salvar página Sobre"}
         </Button>
