@@ -186,6 +186,8 @@ const Index = () => {
           ))}
         </div>
       </Section>
+      )}
+
 
       {/* PROJETOS */}
       <section className="container-editorial py-32">
