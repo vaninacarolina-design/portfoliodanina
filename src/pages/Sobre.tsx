@@ -21,6 +21,16 @@ const Sobre = () => {
   const blocos: Bloco[] = Array.isArray(s?.sobre_blocos) ? (s!.sobre_blocos as any) : [];
   const hero = s?.sobre_hero;
   const h = s?.page_headers?.["sobre"] || {};
+  const pronto = (s as any)?.sobre_pronto ?? true;
+
+  if (!isLoading && !pronto) {
+    return (
+      <section className="container-editorial py-40 text-center">
+        <p className="text-eyebrow mb-4">— Sobre mim</p>
+        <h1 className="font-display text-4xl">Em breve.</h1>
+      </section>
+    );
+  }
 
   return (
     <>

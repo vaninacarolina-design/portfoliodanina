@@ -123,9 +123,9 @@ const Index = () => {
       </section>
 
       {/* EXPERIÊNCIA */}
+      {experiencias.length > 0 && (
       <Section eyebrow="Experiência" title="Trajetória profissional">
         <div className="divide-y divide-border border-y border-border">
-          {experiencias.length === 0 && <Empty label="Nenhuma experiência cadastrada ainda." />}
           {experiencias.map((e: any, i) => (
             <Reveal key={e.id} delay={i * 0.05}>
               <div className="grid md:grid-cols-12 gap-6 md:gap-8 py-8 group">
@@ -140,11 +140,12 @@ const Index = () => {
           ))}
         </div>
       </Section>
+      )}
 
       {/* FORMAÇÃO */}
+      {formacoes.length > 0 && (
       <Section eyebrow="Formação" title="Educação e estudos">
         <div className="grid md:grid-cols-2 gap-x-12 gap-y-10">
-          {formacoes.length === 0 && <Empty label="Nenhuma formação cadastrada ainda." />}
           {formacoes.map((f: any, i) => (
             <Reveal key={f.id} delay={i * 0.05}>
               <div className="border-l-2 border-accent pl-5">
@@ -157,11 +158,12 @@ const Index = () => {
           ))}
         </div>
       </Section>
+      )}
 
       {/* VOLUNTARIADO */}
+      {voluntariados.length > 0 && (
       <Section eyebrow="Voluntariado" title="Atuação social">
         <div className="grid md:grid-cols-3 gap-8">
-          {voluntariados.length === 0 && <Empty label="Nenhuma atividade cadastrada ainda." />}
           {voluntariados.map((v: any, i) => (
             <Reveal key={v.id} delay={i * 0.05}>
               <Link to="/atuacao-social" className="block group h-full">
@@ -184,6 +186,8 @@ const Index = () => {
           ))}
         </div>
       </Section>
+      )}
+
 
       {/* PROJETOS */}
       <section className="container-editorial py-32">

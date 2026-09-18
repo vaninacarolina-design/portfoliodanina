@@ -124,6 +124,7 @@ const AdminConfig = () => {
         </div>
         {[
           { key: "projetos", label: "Projetos" },
+          { key: "skills", label: "Skills" },
           { key: "atuacao-social", label: "Atuação Social" },
           { key: "sobre", label: "Sobre Mim" },
           { key: "contato", label: "Contato" },

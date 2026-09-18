@@ -46,12 +46,14 @@ const AdminSobre = () => {
   });
   const [blocos, setBlocos] = useState<Bloco[]>([]);
   const [hero, setHero] = useState<any>(null);
+  const [pronto, setPronto] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (data) {
       setBlocos(Array.isArray((data as any).sobre_blocos) ? (data as any).sobre_blocos : []);
       setHero((data as any).sobre_hero ?? null);
+      setPronto((data as any).sobre_pronto ?? true);
     }
   }, [data]);
 
@@ -70,12 +72,14 @@ const AdminSobre = () => {
     const { error } = await supabase.from("site_settings").update({
       sobre_blocos: blocos as any,
       sobre_hero: hero as any,
+      sobre_pronto: pronto as any,
     } as any).eq("id", (data as any).id);
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Página Sobre atualizada");
     refetch();
     qc.invalidateQueries({ queryKey: ["site_settings"] });
+    qc.invalidateQueries({ queryKey: ["nav_sections"] });
   };
 
   return (
@@ -204,7 +208,14 @@ const AdminSobre = () => {
         </div>
       </div>
 
-      <div className="sticky bottom-0 bg-background py-4 border-t border-border">
+      <div className="sticky bottom-0 bg-background py-4 border-t border-border space-y-3">
+        <label className="flex items-start gap-3 text-sm cursor-pointer">
+          <input type="checkbox" checked={pronto} onChange={e => setPronto(e.target.checked)} className="mt-1" />
+          <span>
+            <span className="font-medium">Conteúdo pronto para publicar</span>
+            <span className="block text-xs text-muted-foreground">Enquanto estiver desmarcado, a aba “Sobre Mim” fica escondida do site.</span>
+          </span>
+        </label>
         <Button onClick={save} disabled={saving} className="rounded-none gap-2">
           <Plus size={14} /> {saving ? "Salvando…" : "Salvar página Sobre"}
         </Button>
