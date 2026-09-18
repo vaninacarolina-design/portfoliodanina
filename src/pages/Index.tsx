@@ -158,11 +158,12 @@ const Index = () => {
           ))}
         </div>
       </Section>
+      )}
 
       {/* VOLUNTARIADO */}
+      {voluntariados.length > 0 && (
       <Section eyebrow="Voluntariado" title="Atuação social">
         <div className="grid md:grid-cols-3 gap-8">
-          {voluntariados.length === 0 && <Empty label="Nenhuma atividade cadastrada ainda." />}
           {voluntariados.map((v: any, i) => (
             <Reveal key={v.id} delay={i * 0.05}>
               <Link to="/atuacao-social" className="block group h-full">
