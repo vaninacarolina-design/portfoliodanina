@@ -123,9 +123,9 @@ const Index = () => {
       </section>
 
       {/* EXPERIÊNCIA */}
+      {experiencias.length > 0 && (
       <Section eyebrow="Experiência" title="Trajetória profissional">
         <div className="divide-y divide-border border-y border-border">
-          {experiencias.length === 0 && <Empty label="Nenhuma experiência cadastrada ainda." />}
           {experiencias.map((e: any, i) => (
             <Reveal key={e.id} delay={i * 0.05}>
               <div className="grid md:grid-cols-12 gap-6 md:gap-8 py-8 group">
