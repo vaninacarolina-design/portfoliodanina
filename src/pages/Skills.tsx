@@ -4,12 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Reveal } from "@/components/site/Reveal";
 import { RichText } from "@/components/site/RichText";
 import { useSettings } from "@/hooks/useSettings";
+import { SkillsComposition } from "@/components/site/SkillsComposition";
+import type { SkillsHeader } from "@/lib/skills-composition";
 
 type Skill = { id: string; nome: string; categoria: string; logo_url: string | null; ordem: number };
 
 const Skills = () => {
   const { data: s } = useSettings();
-  const h = s?.page_headers?.["skills"] || {};
+  const h: SkillsHeader = s?.page_headers?.["skills"] || {};
 
   const { data: skills = [], isLoading } = useQuery({
     queryKey: ["skills_page"],
@@ -37,13 +39,15 @@ const Skills = () => {
 
       <section className="container-editorial pt-24 pb-12">
         <Reveal>
-          <RichText html={h.eyebrow || "— Habilidades"} className="text-eyebrow mb-6 block" />
-          <RichText as="h1" html={h.titulo || "Skills &amp; <em class='italic font-light'>ferramentas</em>"} className="text-display-xl block" />
+          <RichText html={h.eyebrow ?? "— Habilidades"} className="text-eyebrow mb-6 block" />
+          <RichText as="h1" html={h.titulo ?? "Skills &amp; <em class='italic font-light'>ferramentas</em>"} className="text-display-xl block break-words" />
           <RichText
-            html={h.subtitulo || s?.skills_intro || "Um panorama das ferramentas, competências de gestão e idiomas que uso no dia a dia."}
+            html={h.subtitulo ?? s?.skills_intro ?? "Um panorama das ferramentas, competências de gestão e idiomas que uso no dia a dia."}
             className="mt-8 max-w-2xl text-lg text-foreground/70 leading-relaxed block" />
         </Reveal>
       </section>
+
+      {!!h.blocos?.length && <section className="container-editorial pb-16"><SkillsComposition blocks={h.blocos} /></section>}
 
       <section className="container-editorial pb-32">
         {isLoading && <div className="text-muted-foreground">Carregando…</div>}

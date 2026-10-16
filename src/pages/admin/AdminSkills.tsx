@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { SkillsPageEditor } from "@/components/admin/SkillsPageEditor";
 import { toast } from "sonner";
 import { Plus, Trash2, GripVertical } from "lucide-react";
 import {
@@ -125,6 +126,8 @@ const AdminSkills = () => {
         </div>
         <Button onClick={startNew} className="gap-2 rounded-none"><Plus size={16} /> Nova</Button>
       </div>
+
+      <SkillsPageEditor />
 
       {editing && form && (
         <div className="border border-border p-6 space-y-4 bg-secondary/30">
